@@ -17,8 +17,8 @@
             android:exported="false"
             android:theme="@style/Theme.Group01Undergraduate" />
         <activity
-            android:name=".LoginActivity"
-            android:exported="true"
+            android:name=".SignIn"
+            android:exported="false"
             android:theme="@style/Theme.Group01Undergraduate" />
         <activity
             android:name=".MainActivity"

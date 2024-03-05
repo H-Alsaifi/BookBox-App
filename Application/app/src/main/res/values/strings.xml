@@ -17,4 +17,8 @@
     <string name="pleaseFill">Please fill in the fields\n to Sign in</string>
     <string name="alreadyReg">Already Registered, Sign In!</string>
     <string name="staySigned">Stay Signed in</string>
+    <string name="type_your_email">Type your Email</string>
+    <string name="type_your_password">Type Your Password</string>
+    <string name="retype_your_password">Retype Your Password</string>
+    <string name="sign_up">Sign Up</string>
 </resources>

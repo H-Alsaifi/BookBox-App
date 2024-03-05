@@ -3,23 +3,22 @@ package ca.dal.cs.csci4176.group01undergraduate
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import ca.dal.cs.csci4176.group01undergraduate.databinding.ActivityLoginBinding
+import ca.dal.cs.csci4176.group01undergraduate.databinding.ActivitySignInBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 
-class LoginActivity : AppCompatActivity() {
+class SignIn : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var bind: ActivityLoginBinding
+    private lateinit var bind: ActivitySignInBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        bind = ActivityLoginBinding.inflate(layoutInflater)
+        bind = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(bind.root)
 
         auth = FirebaseAuth.getInstance()
