@@ -26,3 +26,4 @@ render.experimental.xml
 *.keystore
 google-services.json
 *.hprof
+local.defaults.properties
