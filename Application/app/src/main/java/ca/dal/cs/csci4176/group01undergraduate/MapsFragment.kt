@@ -1,5 +1,6 @@
 package ca.dal.cs.csci4176.group01undergraduate
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.fragment.app.Fragment
 
@@ -8,10 +9,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import androidx.compose.material3.BottomSheetDefaults
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMapLoadedCallback
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -21,26 +26,45 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PinConfig
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 private const val PLACES = "places"
-class MapsFragment : Fragment() {
+class MapsFragment : Fragment(), OnMarkerClickListener{
 
     // Halifax location
     private val northEast: LatLng = LatLng(44.684204, -63.543474)
     private val southWest: LatLng = LatLng(44.6209409, -63.629210)
-
     private var places: ArrayList<LatLng> = ArrayList()
+
     /**
      * Acts as a callback
-     *
      */
-    // TODO: Set the pins for the books
     private val callback = OnMapReadyCallback{
         addMarkers(it)
+        it.setOnMarkerClickListener(this)
 
     }
+
+    override fun onMarkerClick(marker: Marker):Boolean {
+
+        if(activity is InteractiveMap){
+            val interactiveMap = activity as InteractiveMap
+            interactiveMap
+                .findViewById<LinearLayout>(R.id.bottomSheetLayout)
+                .findViewById<TextView>(R.id.coordinates)
+                .text = marker.position.toString()
+
+
+            interactiveMap.bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        return true
+    }
+
 
     /**
      * Add pins to map
@@ -52,7 +76,6 @@ class MapsFragment : Fragment() {
                 MarkerOptions()
                     .position(place)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_book_box))
-
             )
         }
     }
@@ -82,8 +105,11 @@ class MapsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val view = inflater.inflate(R.layout.fragment_maps, container, false)
 
-        return inflater.inflate(R.layout.fragment_maps, container, false)
+
+
+        return view
     }
 
     /**
