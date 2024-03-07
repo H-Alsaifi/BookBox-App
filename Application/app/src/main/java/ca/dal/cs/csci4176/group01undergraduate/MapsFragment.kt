@@ -1,39 +1,60 @@
 package ca.dal.cs.csci4176.group01undergraduate
 
+import android.graphics.Color
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMapLoadedCallback
 
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.AdvancedMarker
+import com.google.android.gms.maps.model.AdvancedMarkerOptions
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PinConfig
 
-private const val MAPS_CALLBACK = "callback"
+private const val PLACES = "places"
 class MapsFragment : Fragment() {
 
     // Halifax location
     private val northEast: LatLng = LatLng(44.684204, -63.543474)
     private val southWest: LatLng = LatLng(44.6209409, -63.629210)
 
+    private var places: ArrayList<LatLng> = ArrayList()
     /**
      * Acts as a callback
      *
      */
     // TODO: Set the pins for the books
     private val callback = OnMapReadyCallback{
-
+        addMarkers(it)
 
     }
 
-    private val callback2 = OnMapLoadedCallback{
+    /**
+     * Add pins to map
+     * icon taken from: https://www.figma.com/file/62O8YMjZOLkkTe9jqkmp61/coolicons-%7C-Free-Iconset-(Community)?type=design&t=Umarm5N5x9E9bXGJ-6
+     */
+    private fun addMarkers(map: GoogleMap){
+        places.forEach { place->
+            map.addMarker(
+                MarkerOptions()
+                    .position(place)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_book_box))
 
-
+            )
+        }
     }
 
     /**
@@ -41,9 +62,16 @@ class MapsFragment : Fragment() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
+//        arguments?.let {
+//            places = it.getParcelableArrayList(PLACES)
+//        }
 
-        }
+        // dummy text
+        places.add(LatLng(44.6375, -63.59075))
+        places.add(LatLng(44.6496389, -63.5716944))
+        places.add(LatLng(44.6465278, -63.5943611))
+        places.add(LatLng(44.63189566264618, -63.581212724391236))
+        places.add(LatLng(44.65878323733942, -63.60420573442021))
     }
 
     /**
@@ -65,7 +93,6 @@ class MapsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
-
         mapFragment?.getMapAsync{
             it.setOnMapLoadedCallback{
                 val halifaxBounds = LatLngBounds
@@ -87,7 +114,6 @@ class MapsFragment : Fragment() {
         fun newInstance() =
             MapsFragment().apply {
             arguments = Bundle().apply {
-
             }
         }
     }
