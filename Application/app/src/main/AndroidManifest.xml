@@ -24,13 +24,13 @@
 
         <activity
             android:name=".SignInActivity"
-            android:theme="@style/AppTheme"
+            android:theme="@style/Theme.Group01Undergraduate"
             android:exported="false"
             />
 
         <activity
             android:name=".SignUpActivity"
-            android:theme="@style/AppTheme"
+            android:theme="@style/Theme.Group01Undergraduate"
             android:exported="false" />
 
     </application>

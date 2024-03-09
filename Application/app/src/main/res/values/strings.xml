@@ -12,8 +12,8 @@
     <string name="welcome_message">Welcome!\nPlease Sign in or Sign up to continue</string>
     <string name="NotRegistered">Not Registered Yet, Sign Up!</string>
     <string name="sign_in">Sign In</string>
-    <string name="typePass">Type Your Password</string>
-    <string name="typeEmail">Type your Email</string>
+    <string name="typePass">Password</string>
+    <string name="typeEmail">Email</string>
     <string name="pleaseFill">Please fill in the fields\n to Sign in</string>
     <string name="alreadyReg">Already Registered, Sign In!</string>
     <string name="staySigned">Stay Signed in</string>
