@@ -13,14 +13,6 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
-            android:name=".SignUp"
-            android:exported="false"
-            android:theme="@style/Theme.Group01Undergraduate" />
-        <activity
-            android:name=".SignIn"
-            android:exported="false"
-            android:theme="@style/Theme.Group01Undergraduate" />
-        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Group01Undergraduate">
@@ -29,6 +21,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <activity
+            android:name=".SignInActivity"
+            android:theme="@style/AppTheme"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".SignUpActivity"
+            android:theme="@style/AppTheme"
+            android:exported="false" />
+
+    </application>
 </manifest>
