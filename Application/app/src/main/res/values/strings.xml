@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Group01 undergraduate</string>
+    <string name="explore">Explore</string>
+    <string name="search">Search</string>
+    <string name="account">Account</string>
+    <string name="menu">Menu</string>
+    <string name="contact_us_report">Contact Us / Report</string>
+    <string name="dark_mode">Dark Mode</string>
 </resources>

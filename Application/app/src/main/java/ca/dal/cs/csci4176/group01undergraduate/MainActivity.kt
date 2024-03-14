@@ -1,46 +1,69 @@
 package ca.dal.cs.csci4176.group01undergraduate
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import ca.dal.cs.csci4176.group01undergraduate.ui.theme.Group01UndergraduateTheme
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import ca.dal.cs.csci4176.group01undergraduate.navBar.NavigationIntent
+import ca.dal.cs.csci4176.group01undergraduate.navBar.NavigationReducer
+import ca.dal.cs.csci4176.group01undergraduate.navBar.NavigationTab
+import ca.dal.cs.csci4176.group01undergraduate.navBar.NavigationViewModel
+import ca.dal.cs.csci4176.group01undergraduate.navBar.NavigationViewModelFactory
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: NavigationViewModel
+    private lateinit var bottomNavigationView: BottomNavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            Group01UndergraduateTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
+        setContentView(R.layout.activity_main)
+
+        val reducer = NavigationReducer()
+        val factory = NavigationViewModelFactory(reducer)
+
+        viewModel = ViewModelProvider(this, factory)[NavigationViewModel::class.java]
+        bottomNavigationView = findViewById(R.id.bottom_navigation)
+
+        // Update the selected item in the bottom navigation based on the current state
+        viewModel.state.value?.let { state ->
+            val itemId = when (state.selectedTab) {
+                NavigationTab.MENU -> R.id.nav_menu
+                NavigationTab.EXPLORE -> R.id.nav_explore
+                NavigationTab.SEARCH -> R.id.nav_search
+                NavigationTab.ACCOUNT -> R.id.nav_account
             }
+            bottomNavigationView.selectedItemId = itemId
+        }
+
+        // Set up the navigation bar item selection listener
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_explore -> viewModel.processIntents(NavigationIntent.GoToExplore)
+                R.id.nav_search -> viewModel.processIntents(NavigationIntent.GoToSearch)
+                R.id.nav_account -> viewModel.processIntents(NavigationIntent.GoToAccount)
+                R.id.nav_menu -> viewModel.processIntents(NavigationIntent.GoToMenu)
+            }
+            true
+        }
+
+        // Observe the navigation state changes
+        viewModel.state.observe(this) { state ->
+            // Update the UI based on the current state
+            when (state.selectedTab) {
+                NavigationTab.EXPLORE -> showMenuFragment() // change when Map fragment implemented
+                NavigationTab.SEARCH -> showMenuFragment()  // change when search fragment implemented
+                NavigationTab.ACCOUNT -> showMenuFragment() // change when account fragment implemented
+                NavigationTab.MENU -> showMenuFragment()
+            }
+
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Group01UndergraduateTheme {
-        Greeting("Android")
+    private fun showMenuFragment() {
+        val fragment = MenuFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
 }
