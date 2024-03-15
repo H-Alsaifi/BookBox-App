@@ -12,12 +12,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="31">
+
         <activity
             android:name=".SignUp"
             android:exported="false"
             android:theme="@style/Theme.Group01Undergraduate" />
+
         <activity
             android:name=".SignIn"
+            android:exported="false"
+            android:theme="@style/Theme.Group01Undergraduate">
+        </activity>
+
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Group01Undergraduate" />
+
+        <activity
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Group01Undergraduate">
             <intent-filter>
@@ -26,17 +39,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ResetPassword">
-
-        </activity>
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Group01Undergraduate">
-
-        </activity>
     </application>
 
 </manifest>
