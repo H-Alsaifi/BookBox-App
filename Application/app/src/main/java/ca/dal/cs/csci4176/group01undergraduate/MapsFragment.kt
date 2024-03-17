@@ -32,7 +32,6 @@ import com.google.android.gms.maps.model.PinConfig
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-private const val PLACES = "places"
 class MapsFragment : Fragment(), OnMarkerClickListener{
 
     // Halifax location
@@ -131,16 +130,4 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         }
     }
 
-    companion object{
-
-        /**
-         * Create a new instance of [MapsFragment] using the parameters (so far non for now)
-         */
-        @JvmStatic
-        fun newInstance() =
-            MapsFragment().apply {
-            arguments = Bundle().apply {
-            }
-        }
-    }
 }

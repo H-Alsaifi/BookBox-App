@@ -31,7 +31,7 @@ class InteractiveMap : AppCompatActivity() {
             .from(bottomSheetLayout)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
-        val map : Fragment = MapsFragment.newInstance()
+        val map : Fragment = MapsFragment()
 
         supportFragmentManager
             .beginTransaction()
