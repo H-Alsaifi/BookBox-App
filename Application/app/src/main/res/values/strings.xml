@@ -25,4 +25,10 @@
     <string name="send_link">send link</string>
     <string name="enter_email">Enter your email</string>
     <string name="reset_password_instructions">Enter your email and we\'ll send you a link to get back into your account.</string>
+    <string name="explore">Explore</string>
+    <string name="search">Search</string>
+    <string name="account">Account</string>
+    <string name="menu">Menu</string>
+    <string name="contact_us_report">Contact Us / Report</string>
+    <string name="dark_mode">Dark Mode</string>
 </resources>
