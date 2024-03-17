@@ -21,4 +21,8 @@
     <string name="type_your_password">Type Your Password</string>
     <string name="retype_your_password">Retype Your Password</string>
     <string name="sign_up">Sign Up</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="send_link">send link</string>
+    <string name="enter_email">Enter your email</string>
+    <string name="reset_password_instructions">Enter your email and we\'ll send you a link to get back into your account.</string>
 </resources>

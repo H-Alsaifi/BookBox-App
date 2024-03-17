@@ -3,6 +3,7 @@ package ca.dal.cs.csci4176.group01undergraduate
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ca.dal.cs.csci4176.group01undergraduate.databinding.ActivitySignInBinding
@@ -54,6 +55,11 @@ class SignIn : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Please fill the fields!", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        val forgotPasswordTextView = findViewById<TextView>(R.id.forgot_password)
+        forgotPasswordTextView.setOnClickListener {
+            startActivity(Intent(this, ResetPasswordActivity::class.java))
         }
     }
 
