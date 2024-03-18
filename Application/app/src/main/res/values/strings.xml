@@ -1,4 +1,38 @@
 <resources>
     <string name="app_name">Group01 undergraduate</string>
+
     <string name="title_activity_interactive_map">InteractiveMap</string>
+
+    <string name="title_activity_sign">SignActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="welcome_message">Welcome!\nPlease Sign in or Sign up to continue</string>
+    <string name="NotRegistered">Not Registered Yet, Sign Up!</string>
+    <string name="sign_in">Sign In</string>
+    <string name="typePass">Type Your Password</string>
+    <string name="typeEmail">Type your Email</string>
+    <string name="pleaseFill">Please fill in the fields\n to Sign in</string>
+    <string name="alreadyReg">Already Registered, Sign In!</string>
+    <string name="staySigned">Stay Signed in</string>
+    <string name="type_your_email">Type your Email</string>
+    <string name="type_your_password">Type Your Password</string>
+    <string name="retype_your_password">Retype Your Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="send_link">send link</string>
+    <string name="enter_email">Enter your email</string>
+    <string name="reset_password_instructions">Enter your email and we\'ll send you a link to get back into your account.</string>
+    <string name="explore">Explore</string>
+    <string name="search">Search</string>
+    <string name="account">Account</string>
+    <string name="menu">Menu</string>
+    <string name="contact_us_report">Contact Us / Report</string>
+    <string name="dark_mode">Dark Mode</string>
+
 </resources>

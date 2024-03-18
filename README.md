@@ -2,6 +2,66 @@
 
 
 
+Resrouces: 
+Firebase help: https://console.firebase.google.com/u/1/project/group-1-40481/settings/general/android:com.android.application
+
+Colors: https://stackoverflow.com/questions/3769762/web-colors-in-an-android-color-xml-resource-file
+https://www.schemecolor.com/android-yellow.php
+
+
+Code for the button of dark and light mode 
+----------------------------------------------
+Activity Class:
+public class SettingsActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
+
+        SwitchCompat themeSwitch = findViewById(R.id.themeSwitch);
+        themeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+        });
+    }
+}
+
+Application Class:
+public class MyApp extends Application {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        boolean isNightModeEnabled = ...;
+
+        if (isNightModeEnabled) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
+}
+
+Manifest:
+<application
+android:name=".MyApp"
+android:allowBackup="true"
+android:icon="@mipmap/ic_launcher"
+</application>
+
+
+
+
+
+
+
+
+
 ## Getting started
 
 To make it easy for you to get started with GitLab, here's a list of recommended next steps.
