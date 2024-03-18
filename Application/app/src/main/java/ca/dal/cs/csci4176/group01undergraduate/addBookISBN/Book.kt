@@ -6,4 +6,7 @@ data class Book(
     val isbn: String,
     val description: String,
     val rating: Int
-)
+) {
+    // Default no-argument constructor required by Firebase
+    constructor() : this("", "", "", "", 0)
+}
