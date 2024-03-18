@@ -5,6 +5,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ca.dal.cs.csci4176.group01undergraduate.databinding.ActivityResetPasswordBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class ResetPasswordActivity : AppCompatActivity() {
 
@@ -21,16 +25,33 @@ class ResetPasswordActivity : AppCompatActivity() {
         binding.submitResetButton.setOnClickListener {
             val email = binding.emailEditText.text.toString().trim()
             if (email.isNotEmpty()) {
-                auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Toast.makeText(this, "Reset link sent to your email.", Toast.LENGTH_LONG).show()
-                        finish()
-                    } else {
-                        Toast.makeText(this, "Failed to send reset link.", Toast.LENGTH_LONG).show()
-                    }
-                }
+                FirebaseDatabase.getInstance().getReference("emails")
+                    .orderByValue().equalTo(email).addListenerForSingleValueEvent(object :
+                        ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            if (snapshot.exists()) {
+                                // Email exists, proceed to send reset link
+                                auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        Toast.makeText(applicationContext, "Reset link sent to your email.", Toast.LENGTH_LONG).show()
+                                        finish()
+                                    } else {
+                                        Toast.makeText(applicationContext, "Failed to send reset link.", Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            } else {
+                                // Email not registered
+                                Toast.makeText(applicationContext, "Email not recognized.", Toast.LENGTH_LONG).show()
+                            }
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            // Handle possible errors
+                            Toast.makeText(applicationContext, "Error: ${databaseError.message}", Toast.LENGTH_LONG).show()
+                        }
+                    })
             } else {
-                Toast.makeText(this, "Please enter your email.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Please enter your email.", Toast.LENGTH_SHORT).show()
             }
         }
     }
