@@ -34,26 +34,33 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     private val southWest: LatLng = LatLng(44.6209409, -63.629210)
     private var places: ArrayList<LatLng> = ArrayList()
 
+    // maps
+    lateinit var bottomSheetBehavior : BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetLayout: LinearLayout
+
     /**
      * Acts as a callback
      */
     private val callback = OnMapReadyCallback{
+
+
         addMarkers(it)
         it.setOnMarkerClickListener(this)
+        it.uiSettings.isZoomControlsEnabled = true
 
     }
 
     override fun onMarkerClick(marker: Marker):Boolean {
 
-        if(activity is InteractiveMap){
-            val interactiveMap = activity as InteractiveMap
+        if(activity is MainActivity){
+            val interactiveMap = activity as MainActivity
             interactiveMap
                 .findViewById<LinearLayout>(R.id.bottomSheetLayout)
                 .findViewById<TextView>(R.id.coordinates)
                 .text = marker.position.toString()
 
 
-            interactiveMap.bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
         return true
@@ -99,9 +106,13 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_maps, container, false)
+        val view = inflater.inflate(R.layout.activity_interactive_map, container, false)
 
-
+        // bottom sheet
+        bottomSheetLayout = view.findViewById(R.id.bottomSheetLayout)
+        bottomSheetBehavior = BottomSheetBehavior
+            .from(bottomSheetLayout)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         return view
     }

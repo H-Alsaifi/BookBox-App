@@ -33,10 +33,10 @@ class InteractiveMap : AppCompatActivity() {
 
         val map : Fragment = MapsFragment()
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.mapContainer,map)
-            .commit()
+//        supportFragmentManager
+//            .beginTransaction()
+//            .replace(R.id.mapContainer,map)
+//            .commit()replace
 
 
     }
