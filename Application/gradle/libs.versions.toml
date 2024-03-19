@@ -1,5 +1,6 @@
 [versions]
 agp = "8.3.0"
+converterGson = "2.9.0"
 firebaseAuth = "22.3.1"
 firebaseBom = "32.7.3"
 kotlin = "1.9.0"
@@ -21,10 +22,14 @@ lifecycleViewmodelKtx = "2.7.0"
 activity = "1.8.2"
 materialVersion = "<latest_version>"
 googleServices = "4.4.1"
+firebaseDatabase = "20.3.1"
+retrofit = "2.9.0"
+zxingAndroidEmbedded = "4.1.0"
 firebaseDatabaseKtx = "20.3.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -51,6 +56,9 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 material-vlatestversion = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 google-services = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
+firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
 
 [plugins]

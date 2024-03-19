@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             // Update the UI based on the current state
             when (state.selectedTab) {
                 NavigationTab.EXPLORE -> showMapFragment() // change when Map fragment implemented
-                NavigationTab.SEARCH -> showMenuFragment()  // change when search fragment implemented
+                NavigationTab.SEARCH -> showSearchFragment()  // change when search fragment implemented
                 NavigationTab.ACCOUNT -> showMenuFragment() // change when account fragment implemented
                 NavigationTab.MENU -> showMenuFragment()
             }
@@ -70,13 +70,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showMapFragment(){
-
-
-
         val mapsFragment = MapsFragment()
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container, mapsFragment)
+            .commit()
+
+    }
+    private fun showSearchFragment() {
+        val fragment = SearchFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
             .commit()
 
     }
