@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Group01 undergraduate</string>
+
+    <string name="title_activity_interactive_map">InteractiveMap</string>
+
     <string name="title_activity_sign">SignActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -34,6 +37,8 @@
     <string name="go_back_to_map_button_text">Go Back to Map</string>
     <string name="contact_us_report">Contact Us / Report</string>
     <string name="dark_mode">Dark Mode</string>
+    <string name="type_your_username">Type your username</string>
+
     <!-- EditText hints -->
     <string name="name_hint">Book Box Name</string>
     <string name="location_hint">Location</string>
