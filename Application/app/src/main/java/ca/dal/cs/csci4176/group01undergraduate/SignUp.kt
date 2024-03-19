@@ -8,6 +8,8 @@ import ca.dal.cs.csci4176.group01undergraduate.databinding.ActivitySignUpBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.database.FirebaseDatabase
+
 
 class SignUp : AppCompatActivity() {
 
@@ -37,6 +39,17 @@ class SignUp : AppCompatActivity() {
                     auth.createUserWithEmailAndPassword(email, pass)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
+                                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                                if (userId != null) {
+                                    FirebaseDatabase.getInstance().getReference("emails").child(userId).setValue(email)
+                                        .addOnCompleteListener { emailSaveTask  ->
+                                            if (emailSaveTask .isSuccessful) {
+                                                Toast.makeText(this, "Email saved successfully", Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                Toast.makeText(this, "Failed to save email", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                }
                                 Toast.makeText(this, "Signed Up Successfully!", Toast.LENGTH_SHORT).show()
                                 val intent = Intent(this, SignIn::class.java).apply {
                                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
