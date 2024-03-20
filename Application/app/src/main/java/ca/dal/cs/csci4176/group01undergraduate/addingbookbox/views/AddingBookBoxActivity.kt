@@ -8,11 +8,14 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import ca.dal.cs.csci4176.group01undergraduate.MapsFragment
+import ca.dal.cs.csci4176.group01undergraduate.R
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.intents.AddBookBoxIntent
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.models.AddBookBoxModel
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.viewmodels.AddBookBoxViewModel
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.viewmodels.AddBookBoxViewModelFactory
 import ca.dal.cs.csci4176.group01undergraduate.databinding.AddingBookBoxActivityBinding
+import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BoxFragment
 
 class AddingBookBoxActivity : AppCompatActivity() {
 
@@ -22,9 +25,8 @@ class AddingBookBoxActivity : AppCompatActivity() {
 
     // This launcher will handle the result from the image picker
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+        if (result.resultCode == RESULT_OK && result.data != null) {
             pictureUri = result.data?.data
-            // Here you might want to update your UI to show the selected image
         }
     }
 
@@ -33,8 +35,6 @@ class AddingBookBoxActivity : AppCompatActivity() {
         binding = AddingBookBoxActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Assuming AddBookBoxModel is constructed somewhere in your code.
-        // You need to have an instance of AddBookBoxModel to pass into your ViewModelFactory.
         val factory = AddBookBoxViewModelFactory(AddBookBoxModel())
         viewModel = ViewModelProvider(this, factory).get(AddBookBoxViewModel::class.java)
 
@@ -44,7 +44,7 @@ class AddingBookBoxActivity : AppCompatActivity() {
 
     private fun setupUI() {
         binding.apply {
-            uploadButton.setOnClickListener {
+            fabUpload.setOnClickListener {
                 // Invoke the image picker
                 pickImageFromGallery()
             }
@@ -55,22 +55,42 @@ class AddingBookBoxActivity : AppCompatActivity() {
 
                 if (name.isEmpty() || location.isEmpty() || description.isEmpty() || pictureUri == null) {
                     Toast.makeText(this@AddingBookBoxActivity, "All fields and picture are required.", Toast.LENGTH_LONG).show()
-                    return@setOnClickListener
+                } else {
+                    viewModel.processIntent(
+                        AddBookBoxIntent.SubmitDetails(name, location, description, pictureUri!!)
+                    )
                 }
-
-                viewModel.processIntent(
-                    AddBookBoxIntent.SubmitDetails(name, location, description, pictureUri!!)
-                )
+            }
+            mapButton.setOnClickListener {
+                // Logic to navigate to the map
+                navigateToMap()
             }
         }
     }
 
+    private fun navigateToMap() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, MapsFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
+
+
+    private fun navigateToBoxFragment() {
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fragment_container, BoxFragment())
+            addToBackStack(null)
+            commit()
+        }
+    }
+
+
     private fun observeViewModel() {
         viewModel.state.observe(this) { state ->
             if (state.isSuccessful) {
-                // Assuming you want to navigate back to the SearchFragment.
                 Toast.makeText(this, "Book Box added successfully", Toast.LENGTH_SHORT).show()
-                finish() // Ends the current activity and takes you back to the previous one in the stack.
+                navigateToBoxFragment()
             } else if (state.error != null) {
                 // Handle error state
                 Toast.makeText(this, "Error: ${state.error.message}", Toast.LENGTH_LONG).show()
@@ -80,8 +100,12 @@ class AddingBookBoxActivity : AppCompatActivity() {
     }
 
     private fun pickImageFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = "image/*"
+        }
         pickImageLauncher.launch(intent)
     }
+
+
+
 }

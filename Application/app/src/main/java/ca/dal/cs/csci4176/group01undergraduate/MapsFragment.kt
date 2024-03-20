@@ -1,6 +1,7 @@
 package ca.dal.cs.csci4176.group01undergraduate
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import androidx.fragment.app.Fragment
 
@@ -9,8 +10,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.views.AddingBookBoxActivity
+import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BoxFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
@@ -122,18 +126,40 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Set up map fragment
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
-        mapFragment?.getMapAsync{
-            it.setOnMapLoadedCallback{
-                val halifaxBounds = LatLngBounds
-                    .builder()
+        mapFragment?.getMapAsync {
+            it.setOnMapLoadedCallback {
+                val halifaxBounds = LatLngBounds.builder()
                     .include(northEast)
                     .include(southWest)
                     .build()
-                it.moveCamera(CameraUpdateFactory.newLatLngBounds(halifaxBounds,10))
+                it.moveCamera(CameraUpdateFactory.newLatLngBounds(halifaxBounds, 10))
             }
         }
+
+        // Set up button to view the list of book boxes
+        view.findViewById<Button>(R.id.view_list_button).setOnClickListener {
+            // Navigate to BoxFragment to view the list
+            navigateToBoxFragment()
+        }
+
+        // Set up button to add a new book box
+        view.findViewById<Button>(R.id.add_bookbox_button).setOnClickListener {
+            // Start AddingBookBoxActivity to add a new book box
+            startActivity(Intent(context, AddingBookBoxActivity::class.java))
+        }
     }
+
+    private fun navigateToBoxFragment() {
+        activity?.supportFragmentManager?.beginTransaction()?.apply {
+            replace(R.id.fragment_container, BoxFragment()) // Use the ID of your container where fragments are placed
+            addToBackStack(null) // Add this transaction to the back stack
+            commit() // Commit the transaction
+        }
+    }
+
 
 }
