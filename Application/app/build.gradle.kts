@@ -109,6 +109,10 @@ dependencies {
     implementation(libs.zxing.android.embedded)
     //end
 
+    // google maps
+    implementation(libs.play.services.location)
+    implementation(libs.google.maps.services)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
