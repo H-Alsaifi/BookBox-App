@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".addingbookbox.views.AddingBookBoxActivity">
+    tools:context=".addingbookbox.AddingBookBoxActivity">
 
     <!-- Name input -->
     <EditText
@@ -18,15 +18,16 @@
         app:layout_constraintHorizontal_bias="0.5" />
 
     <!-- Location input -->
-    <EditText
-        android:id="@+id/locationEditText"
-        android:layout_width="0dp"
+    <Button
+        android:id="@+id/getLocationButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/location_hint"
+        android:text="get_location"
         app:layout_constraintTop_toBottomOf="@id/nameEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5" />
+        android:layout_marginTop="16dp" />
+
 
     <!-- Description input -->
     <EditText
@@ -34,7 +35,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/description_hint"
-        app:layout_constraintTop_toBottomOf="@id/locationEditText"
+        app:layout_constraintTop_toBottomOf="@id/getLocationButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />

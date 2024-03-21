@@ -1,19 +1,16 @@
 package ca.dal.cs.csci4176.group01undergraduate
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.views.AddingBookBoxActivity
+import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.AddingBookBoxActivity
 import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BoxFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -27,9 +24,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PinConfig
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class MapsFragment : Fragment(), OnMarkerClickListener{
 

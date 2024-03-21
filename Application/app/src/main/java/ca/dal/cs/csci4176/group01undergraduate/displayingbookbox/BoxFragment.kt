@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import ca.dal.cs.csci4176.group01undergraduate.databinding.FragmentBoxBinding
 import androidx.recyclerview.widget.LinearLayoutManager
-import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.views.AddingBookBoxActivity
+import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.AddingBookBoxActivity
 import com.google.firebase.database.FirebaseDatabase
 import android.content.Intent
 import com.google.firebase.database.ValueEventListener
