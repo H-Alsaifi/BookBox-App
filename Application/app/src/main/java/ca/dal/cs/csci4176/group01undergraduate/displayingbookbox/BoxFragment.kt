@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.AddingBookBoxActivity
 import com.google.firebase.database.FirebaseDatabase
 import android.content.Intent
+import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.models.BookBoxLocation
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -58,7 +59,15 @@ class BoxFragment : Fragment() {
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val bookBoxes = dataSnapshot.children.mapNotNull { child ->
-                    child.getValue(BookBox::class.java)
+                    // Manual parsing might be necessary if automatic mapping fails
+                    val name = child.child("name").value as? String
+                    val description = child.child("description").value as? String
+                    val imageUrl = child.child("imageUrl").value as? String
+                    val latitude = child.child("location/latitude").getValue(Double::class.java) ?: 0.0
+                    val longitude = child.child("location/longitude").getValue(Double::class.java) ?: 0.0
+                    val location = BookBoxLocation(latitude, longitude)
+
+                    BookBox(name, location, description, imageUrl)
                 }
                 bookBoxAdapter.updateBookBoxes(bookBoxes)
             }

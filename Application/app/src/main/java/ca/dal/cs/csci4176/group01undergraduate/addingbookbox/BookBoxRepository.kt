@@ -31,9 +31,10 @@ class BookBoxRepository(private val context: Context) {
                 "name" to name,
                 "description" to description,
                 "imageUrl" to imageUrl.toString(),
-                "latitude" to location.latitude.toString(),
-                "longitude" to location.longitude.toString()
+                "latitude" to location.latitude,
+                "longitude" to location.longitude
             )
+
 
             val pushReference = databaseReference.push()
             pushReference.setValue(bookBoxDetails).await()

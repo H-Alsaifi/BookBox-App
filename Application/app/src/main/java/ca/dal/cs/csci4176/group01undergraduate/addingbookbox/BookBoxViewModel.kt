@@ -62,6 +62,7 @@ class BookBoxViewModel(private val repository: BookBoxRepository, private val ha
                 val location = locationResult.getOrNull()
                 location?.let {
                     val result = repository.submitDetails(intent.name, intent.description, Uri.parse(intent.pictureUri), it)
+                    // process result...
                     _state.value = if (result.isSuccess) {
                         Log.d("ViewModel", "SubmitDetails was successful.")
                         _state.value.copy(isLoading = false, documentId = result.getOrNull(), isSuccessful = true, error = null)
