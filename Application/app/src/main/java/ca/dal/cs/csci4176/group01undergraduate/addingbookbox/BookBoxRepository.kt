@@ -23,7 +23,7 @@ class BookBoxRepository(private val context: Context) {
     private val storageReference = FirebaseStorage.getInstance().reference.child("bookBoxPictures")
     private val fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
 
-    suspend fun submitDetails(name: String, description: String, imageUri: Uri): Result<String> {
+    suspend fun submitDetails(name: String, description: String, imageUri: Uri, location: BookBoxLocation): Result<String> {
         return try {
             val imageUrl = uploadPicture(imageUri).getOrThrow()
 
@@ -31,9 +31,8 @@ class BookBoxRepository(private val context: Context) {
                 "name" to name,
                 "description" to description,
                 "imageUrl" to imageUrl.toString(),
-                // Assume location is already fetched and saved somewhere accessible
-                "latitude" to "known_latitude",
-                "longitude" to "known_longitude"
+                "latitude" to location.latitude.toString(),
+                "longitude" to location.longitude.toString()
             )
 
             val pushReference = databaseReference.push()

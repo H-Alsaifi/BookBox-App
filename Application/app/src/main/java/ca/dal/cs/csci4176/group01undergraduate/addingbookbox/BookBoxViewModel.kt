@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import android.net.Uri
+import android.util.Log
 
 class BookBoxViewModel(private val repository: BookBoxRepository, private val hasLocationPermission: () -> Boolean) : ViewModel() {
 
@@ -54,15 +55,33 @@ class BookBoxViewModel(private val repository: BookBoxRepository, private val ha
     private fun submitDetails(intent: BookBoxIntent.SubmitDetails) {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
-            val result = repository.submitDetails(intent.name, intent.description, Uri.parse(intent.pictureUri))
-            // Use isSuccessful and getOrElse to properly handle the Result
-            _state.value = if (result.isSuccess) {
-                _state.value.copy(isLoading = false, documentId = result.getOrNull(), error = null)
+
+            // Fetch location before attempting to submit details
+            val locationResult = repository.getCurrentLocation()
+            if (locationResult.isSuccess) {
+                val location = locationResult.getOrNull()
+                location?.let {
+                    val result = repository.submitDetails(intent.name, intent.description, Uri.parse(intent.pictureUri), it)
+                    _state.value = if (result.isSuccess) {
+                        Log.d("ViewModel", "SubmitDetails was successful.")
+                        _state.value.copy(isLoading = false, documentId = result.getOrNull(), isSuccessful = true, error = null)
+                    } else {
+                        Log.d("ViewModel", "SubmitDetails failed with error: ${result.exceptionOrNull()?.message}")
+                        _state.value.copy(isLoading = false, error = result.exceptionOrNull() as? Exception)
+                    }
+                } ?: run {
+                    // Handle the case where location is null
+                    _state.value = _state.value.copy(isLoading = false, error = Exception("Location is null"))
+                }
             } else {
-                _state.value.copy(isLoading = false, error = result.exceptionOrNull() as? Exception)
+                // Handle the case where location fetching failed
+                _state.value = _state.value.copy(isLoading = false, error = Exception("Failed to fetch location"))
             }
         }
     }
+
+
+
 
     private fun uploadPicture(pictureUri: String) {
         viewModelScope.launch {
