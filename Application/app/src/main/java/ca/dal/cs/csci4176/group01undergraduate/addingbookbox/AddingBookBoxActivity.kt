@@ -75,8 +75,8 @@ class AddingBookBoxActivity : AppCompatActivity() {
                     viewModel.offerIntent(BookBoxIntent.SubmitDetails(name, description, pickedImageUri.toString()))
                 }
             }
-            getLocationButton.setOnClickListener {
-                // Dispatch FetchCurrentLocation intent
+            binding.getLocationButton.setOnClickListener {
+                // Dispatch FetchCurrentLocation intent and observe the change
                 viewModel.offerIntent(BookBoxIntent.FetchCurrentLocation)
             }
             mapButton.setOnClickListener {
@@ -160,13 +160,16 @@ class AddingBookBoxActivity : AppCompatActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.state.collect { state ->
-                // Handle state.isLoading, state.isSuccessful, and state.error as appropriate
+                // Update the location display when location data is available
+                state.location?.let {
+                    val locationText = "Lat: ${it.latitude}, Lon: ${it.longitude}"
+                    binding.locationDisplay.text = locationText
+                }
 
-                // Only navigate to the map if state.isSuccessful is true
                 if (state.isSuccessful && !state.isLoading && state.error == null) {
-                    navigateToMap()
+                    Toast.makeText(this@AddingBookBoxActivity, "Book Box added successfully", Toast.LENGTH_SHORT).show()
+                    navigateToMap() // This ensures navigation occurs after success
                 } else if (state.error != null) {
-                    // Handle the error case
                     handleError(state.error)
                 }
             }
@@ -174,8 +177,8 @@ class AddingBookBoxActivity : AppCompatActivity() {
     }
 
     private fun handleError(error: Exception) {
+        // Handle the error
         Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_LONG).show()
-        // Optionally navigate to an error handling fragment or stay on the same page
     }
 
 
