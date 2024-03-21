@@ -246,7 +246,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                     .include(northEast)
                     .include(southWest)
                     .build()
-                it.moveCamera(CameraUpdateFactory.newLatLngBounds(halifaxBounds,10))
+                it.moveCamera(CameraUpdateFactory.newLatLngBounds(halifaxBounds, 10))
             }
         }
         mapFragment?.getMapAsync(callback)
@@ -265,5 +265,14 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     }
 
     }
+
+    private fun navigateToBoxFragment() {
+        activity?.supportFragmentManager?.beginTransaction()?.apply {
+            replace(R.id.fragment_container, BoxFragment()) // Use the ID of your container where fragments are placed
+            addToBackStack(null) // Add this transaction to the back stack
+            commit() // Commit the transaction
+        }
+    }
+
 
 }
