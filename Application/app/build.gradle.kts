@@ -106,6 +106,8 @@ dependencies {
     implementation(libs.firebase.database)
     //end
 
+    implementation("com.google.firebase:firebase-analytics")
+
     // isbn
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
@@ -117,6 +119,10 @@ dependencies {
     // google maps
     implementation(libs.play.services.location)
     implementation(libs.google.maps.services)
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.activity:activity:1.8.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -264,7 +264,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         }
     }
 
-    }
+
 
     private fun navigateToBoxFragment() {
         activity?.supportFragmentManager?.beginTransaction()?.apply {
