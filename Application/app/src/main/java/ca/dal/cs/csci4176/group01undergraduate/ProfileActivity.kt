@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,7 +27,7 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
@@ -37,22 +38,19 @@ class ProfileActivity : AppCompatActivity() {
         viewModel.loadUserProfile()
 
         val nameTextView: TextView = findViewById(R.id.tvUsername)
-        val emailTextView: TextView = findViewById(R.id.tvEmail)
+        val EditPassword: ImageView = findViewById(R.id.btnEditPassword)
         val deleteAccountButton: Button = findViewById(R.id.btnDeleteAccount)
         val logoutButton: Button = findViewById(R.id.btnLogout)
         profileImageView = findViewById(R.id.profile_image)
+
+        val oldPasswordEditText = findViewById<EditText>(R.id.oldPassword)
+        val newPasswordEditText = findViewById<EditText>(R.id.newPassword)
+        val changePasswordButton = findViewById<Button>(R.id.changePasswordButton)
 
         findViewById<ImageView>(R.id.btnEditUsername).setOnClickListener {
             showEditDialog("Edit Name", nameTextView.text.toString()) { newName ->
                 nameTextView.text = newName
                 viewModel.updateDisplayName(newName)
-            }
-        }
-
-        findViewById<ImageView>(R.id.btnEditEmail).setOnClickListener {
-            showEditDialog("Edit Email", emailTextView.text.toString()) { newEmail ->
-                emailTextView.text = newEmail
-                viewModel.updateEmail(newEmail)
             }
         }
 
@@ -66,6 +64,21 @@ class ProfileActivity : AppCompatActivity() {
 
         logoutButton.setOnClickListener {
             logoutUser()
+        }
+        EditPassword.setOnClickListener {
+            showChangePasswordDialog()
+        }
+
+        changePasswordButton.setOnClickListener {
+            val oldPassword = oldPasswordEditText.text.toString().trim()
+            val newPassword = newPasswordEditText.text.toString().trim()
+
+            if (oldPassword.isEmpty() || newPassword.isEmpty()) {
+                Toast.makeText(this, "Both fields are required", Toast.LENGTH_SHORT).show()
+            } else {
+                // Assuming your ViewModel's changePassword function takes two Strings for old and new passwords
+                viewModel.changePassword(oldPassword, newPassword)
+            }
         }
 
         // Observing ViewModel's state LiveData to update the UI accordingly
@@ -101,9 +114,36 @@ class ProfileActivity : AppCompatActivity() {
             .setNegativeButton("Cancel", null)
             .show()
     }
+    private fun showChangePasswordDialog() {
+        val oldPasswordInput = EditText(this)
+        oldPasswordInput.hint = "Old Password"
+        val newPasswordInput = EditText(this)
+        newPasswordInput.hint = "New Password"
+
+        val layout = LinearLayout(this)
+        layout.orientation = LinearLayout.VERTICAL
+        layout.addView(oldPasswordInput)
+        layout.addView(newPasswordInput)
+
+        AlertDialog.Builder(this)
+            .setTitle("Change Password")
+            .setView(layout)
+            .setPositiveButton("Change") { _, _ ->
+                val oldPassword = oldPasswordInput.text.toString().trim()
+                val newPassword = newPasswordInput.text.toString().trim()
+                if (oldPassword.isNotEmpty() && newPassword.isNotEmpty()) {
+                    viewModel.changePassword(oldPassword, newPassword)
+                } else {
+                    Toast.makeText(this, "Both fields are required.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
 
     private fun navigateToMainActivityWithToast(message: String) {
-        val intent = Intent(this, MainActivity::class.java).apply {
+        val intent = Intent(this, SignIn::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("toast_message", message)
         }
@@ -121,6 +161,7 @@ class ProfileActivity : AppCompatActivity() {
             .setPositiveButton("Save") { dialog, _ ->
                 onSave(input.text.toString())
                 dialog.dismiss()
+                //Toast.makeText(this, "Username updated successfully", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.cancel()
@@ -154,7 +195,7 @@ class ProfileActivity : AppCompatActivity() {
                 val nameTextView: TextView = findViewById(R.id.tvUsername)
                 nameTextView.text = state.username
                 // Show a toast message
-                Toast.makeText(this, "Display name updated successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Username updated successfully", Toast.LENGTH_SHORT).show()
             }
             is ProfileState.ProfilePictureUpdated -> {
                 // Update the ImageView with the new profile picture

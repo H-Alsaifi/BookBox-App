@@ -19,47 +19,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <TextView
         android:id="@+id/tvUsername"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
+        android:layout_width="124dp"
+        android:layout_height="32dp"
         android:text="Developer"
         android:textAppearance="?attr/textAppearanceHeadline6"
-        app:layout_constraintEnd_toStartOf="@id/btnEditUsername"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_image" />
+
+        app:layout_constraintBottom_toTopOf="@+id/tvEmail"
+        app:layout_constraintEnd_toStartOf="@+id/btnEditUsername"
+        app:layout_constraintHorizontal_bias="0.909"
+        app:layout_constraintStart_toEndOf="@+id/profile_image"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.335"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/tvEmail"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="64dp"
         android:text="developer@appsnipp.com"
         android:textAppearance="?attr/textAppearanceBody1"
-        app:layout_constraintEnd_toStartOf="@id/btnEditEmail"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvUsername" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_image"
+        tools:ignore="MissingConstraints" />
+
 
     <TextView
         android:id="@+id/tvPassword"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_width="300dp"
+        android:layout_height="22dp"
         android:text="Password"
         android:textAppearance="?attr/textAppearanceBody1"
-        app:layout_constraintEnd_toStartOf="@id/btnEditPassword"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvEmail" />
-
+        app:layout_constraintTop_toBottomOf="@+id/tvEmail"
+        app:layout_constraintVertical_bias="0.042"
+        tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/btnEditUsername"
         android:layout_width="24dp"
         android:layout_height="24dp"
+        android:layout_marginEnd="72dp"
         android:contentDescription="edit username"
         android:src="@drawable/editing"
         app:layout_constraintBottom_toBottomOf="@id/tvUsername"
@@ -67,33 +75,25 @@
         app:layout_constraintTop_toTopOf="@id/tvUsername"
         app:layout_constraintVertical_bias="0.0" />
 
-    <ImageView
-        android:id="@+id/btnEditEmail"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:contentDescription="edit_email"
-        android:src="@drawable/editing"
-        app:layout_constraintBottom_toBottomOf="@id/tvEmail"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvEmail" />
-
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="104dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="292dp"
         android:text="logout"
+        app:layout_constraintBottom_toTopOf="@+id/btnDeleteAccount"
         app:layout_constraintStart_toEndOf="@+id/profile_image"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.961" />
 
     <Button
         android:id="@+id/btnDeleteAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="28dp"
         android:backgroundTint="@color/primaryColor"
-        android:text="delete your account"
+        android:text="delete account"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -104,6 +104,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginTop="12dp"
+        android:layout_marginEnd="28dp"
         android:contentDescription="edit password"
         android:src="@drawable/editing"
         app:layout_constraintBottom_toBottomOf="@id/tvPassword"
@@ -116,12 +117,47 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Membership Level: Bronze"
-        app:layout_constraintBottom_toTopOf="@+id/tvUsername"
+        app:layout_constraintBottom_toTopOf="@+id/tvEmail"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.346"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_image"
-        app:layout_constraintVertical_bias="0.547"
+        app:layout_constraintHorizontal_bias="0.265"
+        app:layout_constraintStart_toEndOf="@+id/profile_image"
+        app:layout_constraintTop_toBottomOf="@+id/tvUsername"
+        app:layout_constraintVertical_bias="0.158"
         tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/oldPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Old Password"
+        android:inputType="textPassword"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvPassword" />
+
+    <EditText
+        android:id="@+id/newPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="New Password"
+        android:inputType="textPassword"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/oldPassword" />
+
+    <Button
+        android:id="@+id/changePasswordButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Change Password"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/newPassword" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
