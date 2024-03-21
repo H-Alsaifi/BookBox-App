@@ -1,5 +1,6 @@
 package ca.dal.cs.csci4176.group01undergraduate
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             when (state.selectedTab) {
                 NavigationTab.EXPLORE -> showMapFragment() // change when Map fragment implemented
                 NavigationTab.SEARCH -> showSearchFragment()  // change when search fragment implemented
-                NavigationTab.ACCOUNT -> showMenuFragment() // change when account fragment implemented
+                NavigationTab.ACCOUNT -> showProfileFragment() // change when account fragment implemented
                 NavigationTab.MENU -> showMenuFragment()
             }
 
@@ -67,6 +68,12 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
+    }
+
+    private fun showProfileFragment() {
+        val intent = Intent(this, ProfileActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun showMapFragment(){
