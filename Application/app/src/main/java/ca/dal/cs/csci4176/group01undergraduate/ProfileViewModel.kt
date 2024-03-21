@@ -82,38 +82,26 @@ class ProfileViewModel : ViewModel() {
     }
 
 
-    private fun changePassword(oldPassword: String, newPassword: String) {
+    fun changePassword(oldPassword: String, newPassword: String) {
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null && user.email != null) {
             val credential = EmailAuthProvider.getCredential(user.email!!, oldPassword)
-            user.reauthenticate(credential)
-                .addOnCompleteListener { reauthTask ->
-                    if (reauthTask.isSuccessful) {
-                        user.updatePassword(newPassword)
-                            .addOnCompleteListener { passwordTask ->
-                                if (passwordTask.isSuccessful) {
-                                    _state.postValue(ProfileState.PasswordChanged)
-                                } else {
-                                    _state.postValue(
-                                        ProfileState.Error(
-                                            passwordTask.exception?.message
-                                                ?: "Failed to update password."
-                                        )
-                                    )
-                                }
-                            }
-                    } else {
-                        _state.postValue(
-                            ProfileState.Error(
-                                reauthTask.exception?.message ?: "Failed to re-authenticate."
-                            )
-                        )
+            user.reauthenticate(credential).addOnCompleteListener { reauthTask ->
+                if (reauthTask.isSuccessful) {
+                    user.updatePassword(newPassword).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            _state.postValue(ProfileState.PasswordChanged)
+                        } else {
+                            _state.postValue(ProfileState.Error("Password update failed: ${task.exception?.message}"))
+                        }
                     }
+                } else {
+                    _state.postValue(ProfileState.Error("Re-authentication failed: ${reauthTask.exception?.message}"))
                 }
-        } else {
-            _state.postValue(ProfileState.Error("User is not logged in."))
+            }
         }
     }
+
 
     fun deleteAccount() {
         userId.let { uid ->
@@ -133,6 +121,7 @@ class ProfileViewModel : ViewModel() {
                 }
         }
     }
+
     init {
         loadUserProfile()
     }
@@ -145,7 +134,8 @@ class ProfileViewModel : ViewModel() {
                     user?.let {
                         _state.value = ProfileState.DisplayNameUpdated(it.username)
                         _state.value = ProfileState.EmailUpdated(it.email)
-                        _state.value = ProfileState.MembershipStatusUpdated(calculateMembershipStatus(it.points))
+                        _state.value =
+                            ProfileState.MembershipStatusUpdated(calculateMembershipStatus(it.points))
                     }
                 }.addOnFailureListener {
                     _state.value = ProfileState.Error("Failed to fetch user data")
@@ -164,38 +154,4 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-//fun loadUserProfile() {
-//    val userId = FirebaseAuth.getInstance().currentUser?.uid
-//    userId?.let { uid ->
-//        FirebaseDatabase.getInstance().getReference("users").child(uid)
-//            .addListenerForSingleValueEvent(object : ValueEventListener {
-//                override fun onDataChange(snapshot: DataSnapshot) {
-//                    val user = snapshot.getValue(User::class.java)
-//                    user?.let {
-//                        // Post updates for display name and email
-//                        _state.postValue(ProfileState.DisplayNameUpdated(it.username))
-//                        _state.postValue(ProfileState.EmailUpdated(it.email))
-//                        // Calculate and post membership status based on points
-//                        val membershipStatus = calculateMembershipStatus(it.points)
-//                        _state.postValue(ProfileState.MembershipStatusUpdated(membershipStatus))
-//                    }
-//                }
-//
-//                override fun onCancelled(error: DatabaseError) {
-//                    _state.postValue(ProfileState.Error(error.message))
-//                }
-//            })
-//    }
-//}
-//
-//    private fun calculateMembershipStatus(points: Int): String {
-//        return when {
-//            points > 60 -> "Platinum"
-//            points in 41..60 -> "Gold"
-//            points in 21..40 -> "Silver"
-//            else -> "Bronze"
-//        }
-//    }
-//
-//
 }
