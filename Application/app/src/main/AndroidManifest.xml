@@ -59,6 +59,11 @@
             android:exported="false"
             android:theme="@style/Theme.Group01Undergraduate"/>
 
+        <activity
+            android:name=".addingbookbox.views.AddingBookBoxActivity"
+            android:exported="false"
+        android:theme="@style/Theme.Group01Undergraduate" />
+
     </application>
 
 </manifest>
