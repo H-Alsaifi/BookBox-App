@@ -9,18 +9,17 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
 
-class EmailNotification {
+class PopupNotification(private val context: Context) {
 
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
     private val notificationDatabaseRef = database.getReference("notifications")
 
-
     fun authenticateUser(email: String, password: String, callback: (Boolean, String?) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    sendLoginEmail(email)
+                    sendLoginNotification(email)
                     callback(true, null)
                 } else {
                     callback(false, task.exception?.message ?: "Authentication failed")
@@ -28,14 +27,15 @@ class EmailNotification {
             }
     }
 
-
-    fun sendPasswordChangeNotification(email: String) {
-        try {
-            FirebaseMessaging.getInstance().send(getPasswordChangeNotificationMessage(email))
-        } catch (e: Exception) {
-            println("Failed to send password change notification: ${error.message}")
+    fun sendPasswordChangeNotification() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            showToast("Your password has been changed.")
+        } else {
+            showToast("Failed to send password change notification: User not authenticated.")
         }
     }
+
 
     private fun getPasswordChangeNotificationMessage(email: String): String {
         return "Your password for $email has been changed."
@@ -56,35 +56,28 @@ class EmailNotification {
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        println("Failed to subscribe to favorite Book Boxes updates: ${error.message}")
+                        showToast("Failed to subscribe to favorite Book Boxes updates: ${error.message}")
                     }
                 })
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                try {
-                    val bookBox = snapshot.getValue(BookBox::class.java)
-                    if (bookBox != null) {
-                    }
-                } catch (e: Exception) {
-                    println("Error handling onChildChanged event: ${error.message}")
-                }
+                // No action needed
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                println("Error handling onChildChanged event: ${error.message}")
+                // No action needed
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                println("Error handling onChildChanged event: ${error.message}")
+                // No action needed
             }
 
             override fun onCancelled(error: DatabaseError) {
-                println("Failed to subscribe to favorite Book Boxes updates: ${error.message}")
+                showToast("Failed to subscribe to favorite Book Boxes updates: ${error.message}")
             }
         })
     }
-
 
     private fun sendFavoriteBookBoxUpdateNotification(userId: String, bookBox: BookBox) {
         try {
@@ -92,7 +85,11 @@ class EmailNotification {
             val notification = Notification(userId, "New book added to ${bookBox.name}")
             notificationDatabaseRef.child(notificationId).setValue(notification)
         } catch (e: Exception) {
-            println("Failed to send favorite Book Box update notification: ${error.message}")
+            showToast("Failed to send favorite Book Box update notification: ${e.message}")
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }
