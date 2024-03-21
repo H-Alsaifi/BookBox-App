@@ -3,6 +3,7 @@ package ca.dal.cs.csci4176.group01undergraduate
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.content.Intent
 import android.graphics.Color
 import androidx.fragment.app.Fragment
 
@@ -14,6 +15,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.views.AddingBookBoxActivity
+import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BoxFragment
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -249,6 +252,17 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         mapFragment?.getMapAsync(callback)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
+        view.findViewById<Button>(R.id.view_list_button).setOnClickListener {
+            // Navigate to BoxFragment to view the list
+            navigateToBoxFragment()
+        }
+
+        // Set up button to add a new book box
+        view.findViewById<Button>(R.id.add_bookbox_button).setOnClickListener {
+            // Start AddingBookBoxActivity to add a new book box
+            startActivity(Intent(context, AddingBookBoxActivity::class.java))
+        }
+    }
 
     }
 
