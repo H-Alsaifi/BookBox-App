@@ -36,6 +36,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -71,6 +72,7 @@ secrets {
 }
 
 
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -98,8 +100,13 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.activity)
+    implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.database.ktx)
     implementation(libs.firebase.database)
     //end
+
+    implementation("com.google.firebase:firebase-analytics")
 
     // isbn
     implementation(libs.retrofit)
@@ -107,7 +114,17 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.zxing.android.embedded)
+    implementation(libs.play.services.location)
     //end
+
+    // google maps
+    implementation(libs.play.services.location)
+    implementation(libs.google.maps.services)
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.activity:activity:1.8.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation ("com.squareup.picasso:picasso:2.71828")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -116,4 +133,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
 }
