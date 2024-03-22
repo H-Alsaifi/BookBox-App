@@ -2,42 +2,73 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="31">
+        <activity
+            android:name=".ProfileIntent"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileViewModel"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
+            android:theme="@style/Theme.Group01Undergraduate"
+            android:exported="false" />
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAza1wO0SS3GB207cYAZjkYWc-ugqQVCg4" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity android:name=".InteractiveMap" />
         <activity
             android:name=".SignUp"
             android:exported="false"
             android:theme="@style/Theme.Group01Undergraduate" />
-
         <activity
             android:name=".SignIn"
             android:exported="true"
             android:theme="@style/Theme.Group01Undergraduate">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ResetPasswordActivity"
             android:exported="false"
             android:theme="@style/Theme.Group01Undergraduate" />
-
+        <activity
+            android:name=".AddBookActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Group01Undergraduate" />
         <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.Group01Undergraduate"/>
-
+            android:theme="@style/Theme.Group01Undergraduate" />
+        <activity
+            android:name=".addingbookbox.AddingBookBoxActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Group01Undergraduate" />
     </application>
 
 </manifest>

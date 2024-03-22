@@ -2,12 +2,21 @@
 
 
 
+
 Resrouces: 
 Firebase help: https://console.firebase.google.com/u/1/project/group-1-40481/settings/general/android:com.android.application
 
 Colors: https://stackoverflow.com/questions/3769762/web-colors-in-an-android-color-xml-resource-file
 https://www.schemecolor.com/android-yellow.php
-
+Styles and themes: https://developer.android.com/develop/ui/views/theming/themes
+Icon: https://icon.kitchen/i/H4sIAAAAAAAAA0WOwQrCMAyG3yVedxgMPOzqI7ibiKRr6srSZrarImPvbluE5ZDAF74%2F2eCNnChCv4HGMA8TOYLeIEdqwDwvbBcMa1lHygM0GUy8QgN2FJ%2BBI58eSmSGvQjDd8k%2BjH%2BvZghLyOxkamWmDqa6tu3OlV0nrG58JRtGphLoRCcu790AvQ5idbksMfcPKbjvP5eQ7fzBAAAA
+https://developer.android.com/studio/write/create-app-icons
+Font: https://developer.android.com/jetpack/compose/text/fonts#kotlin
+Dark and Light mode: https://www.delasign.com/blog/android-studio-kotlin-light-dark-mode/
+MVI: https://medium.com/@meetjanani47/mvi-architecture-implementation-with-kotlin-flow-android-ae094fa83bff#:~:text=The%20meaning%20of%20MVI%20is,trigger%20based%20on%20user%20action
+https://hannesdorfmann.com/android/model-view-intent/
+Options accessible for everyone: https://medium.com/mesmerhq/designing-accessible-text-for-android-variable-font-and-screen-sizes-392fd386aea5
+Colors: https://www.schemecolor.com/android-yellow.php
 
 Code for the button of dark and light mode 
 ----------------------------------------------

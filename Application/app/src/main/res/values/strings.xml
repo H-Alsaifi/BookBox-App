@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">Group01 undergraduate</string>
+    <string name="app_name">The Book Box</string>
+
+    <string name="title_activity_interactive_map">InteractiveMap</string>
+
     <string name="title_activity_sign">SignActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -29,6 +32,23 @@
     <string name="search">Search</string>
     <string name="account">Account</string>
     <string name="menu">Menu</string>
+    <string name="search_hint">Enter book box name</string>
+    <string name="add_box_button_text">Add New Box</string>
+    <string name="go_back_to_map_button_text">Go Back to Map</string>
     <string name="contact_us_report">Contact Us / Report</string>
     <string name="dark_mode">Dark Mode</string>
+    <string name="type_your_username">Type your username</string>
+    <string name="map_button_text">Map</string>
+
+
+    <!-- EditText hints -->
+    <string name="name_hint">Book Box Name</string>
+    <string name="location_hint">Location</string>
+    <string name="description_hint">Description</string>
+    <!-- Button texts -->
+    <string name="upload_picture">Upload Picture</string>
+    <string name="confirm_addition">Confirm Addition</string>
+    <string name="book_box_image_description">Image of the book box</string>
+    <string name="image_description">Description of the image</string>
+
 </resources>

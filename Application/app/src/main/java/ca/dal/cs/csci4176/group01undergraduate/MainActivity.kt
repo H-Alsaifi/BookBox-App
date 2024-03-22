@@ -1,6 +1,8 @@
 package ca.dal.cs.csci4176.group01undergraduate
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import ca.dal.cs.csci4176.group01undergraduate.navBar.NavigationIntent
@@ -9,6 +11,7 @@ import ca.dal.cs.csci4176.group01undergraduate.navBar.NavigationTab
 import ca.dal.cs.csci4176.group01undergraduate.navBar.NavigationViewModel
 import ca.dal.cs.csci4176.group01undergraduate.navBar.NavigationViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class MainActivity : AppCompatActivity() {
 
@@ -51,9 +54,9 @@ class MainActivity : AppCompatActivity() {
         viewModel.state.observe(this) { state ->
             // Update the UI based on the current state
             when (state.selectedTab) {
-                NavigationTab.EXPLORE -> showMenuFragment() // change when Map fragment implemented
-                NavigationTab.SEARCH -> showMenuFragment()  // change when search fragment implemented
-                NavigationTab.ACCOUNT -> showMenuFragment() // change when account fragment implemented
+                NavigationTab.EXPLORE -> showMapFragment() // change when Map fragment implemented
+                NavigationTab.SEARCH -> showSearchFragment()  // change when search fragment implemented
+                NavigationTab.ACCOUNT -> showProfileFragment() // change when account fragment implemented
                 NavigationTab.MENU -> showMenuFragment()
             }
 
@@ -65,5 +68,27 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
+    }
+
+    private fun showProfileFragment() {
+        val intent = Intent(this, ProfileActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun showMapFragment(){
+        val mapsFragment = MapsFragment()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, mapsFragment)
+            .commit()
+
+    }
+    private fun showSearchFragment() {
+        val fragment = SearchFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
+
     }
 }

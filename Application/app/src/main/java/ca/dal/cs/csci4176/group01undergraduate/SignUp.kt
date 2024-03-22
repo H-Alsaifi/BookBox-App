@@ -8,6 +8,8 @@ import ca.dal.cs.csci4176.group01undergraduate.databinding.ActivitySignUpBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.database.FirebaseDatabase
+
 
 class SignUp : AppCompatActivity() {
 
@@ -31,19 +33,31 @@ class SignUp : AppCompatActivity() {
             val email = bind.email.text.toString().trim()
             val pass = bind.pass.text.toString().trim()
             val checkPass = bind.confirmPass.text.toString().trim()
+            val username = bind.username.text.toString().trim()
 
-            if (email.isNotEmpty() && pass.isNotEmpty() && checkPass.isNotEmpty()) {
+            if (email.isNotEmpty() && pass.isNotEmpty() && checkPass.isNotEmpty() && username.isNotEmpty()) { // Check if all fields are filled
                 if (pass == checkPass) {
                     auth.createUserWithEmailAndPassword(email, pass)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                Toast.makeText(this, "Signed Up Successfully!", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(this, SignIn::class.java).apply {
-                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    putExtra("fromSignUp", true)
+                                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                                if (userId != null) {
+                                    // Create a user object
+                                    val user = User(username, email)
+
+                                    // Push the user object to Firebase Realtime Database
+                                    FirebaseDatabase.getInstance().getReference("users").child(userId).setValue(user)
+
+                                    Toast.makeText(this, "Signed Up Successfully!", Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(this, SignIn::class.java).apply {
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        putExtra("fromSignUp", true)
+                                    }
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    Toast.makeText(this, "User ID is null", Toast.LENGTH_SHORT).show()
                                 }
-                                startActivity(intent)
-                                finish()
                             } else {
                                 val message = when (task.exception) {
                                     is FirebaseAuthWeakPasswordException -> "Password is too weak."
@@ -60,5 +74,6 @@ class SignUp : AppCompatActivity() {
                 Toast.makeText(this, "All fields are required.", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 }
