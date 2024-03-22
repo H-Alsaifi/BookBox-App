@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.Intent
 import android.graphics.Color
+import android.location.Geocoder
+import android.os.Build
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
@@ -18,7 +20,9 @@ import android.widget.TextView
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.views.AddingBookBoxActivity
 import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BoxFragment
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BookBox
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -36,12 +40,18 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
 import com.google.maps.PendingResult
 import com.google.maps.internal.PolylineEncoding
 import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
+import java.io.IOException
 
 class MapsFragment : Fragment(), OnMarkerClickListener{
 
@@ -59,6 +69,11 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
     // polyline for directions
     private var currentPolyline: Polyline? = null
+
+    // database
+    private lateinit var database: FirebaseDatabase
+    private lateinit var dbReference: DatabaseReference
+    private lateinit var bookBoxes: ArrayList<BookBox>
 
     /**
      * Acts as a callback
@@ -184,13 +199,38 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
      * icon taken from: https://www.figma.com/file/62O8YMjZOLkkTe9jqkmp61/coolicons-%7C-Free-Iconset-(Community)?type=design&t=Umarm5N5x9E9bXGJ-6
      */
     private fun addMarkers(){
-        places.forEach { place->
+        bookBoxes.forEach { bookBox->
             map.addMarker(
                 MarkerOptions()
-                    .position(place)
+                    .position(LatLng(bookBox.location.latitude, bookBox.location.longitude))
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_book_box))
             )
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun getAddressFromLatLng(lat: Double, lng: Double): String {
+        val geocoder = Geocoder(requireContext())
+        var string = ""
+        try {
+           val addresses = geocoder.getFromLocation(lat,lng,1)
+            if (addresses != null) {
+                if (addresses.isNotEmpty()) {
+                    val address = addresses[0]
+                    string = String.format("%s %s, %s, %s %s",
+                        address.subThoroughfare,
+                        address.thoroughfare,
+                        address.subAdminArea,
+                        address.adminArea,
+                        address.postalCode)
+
+                }
+            }
+
+        } catch (e: IOException){
+            Log.d("Error", e.toString())
+        }
+        return string
     }
 
     /**
@@ -199,14 +239,49 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        bookBoxes = ArrayList()
+
+        // database
+        database = FirebaseDatabase.getInstance()
+        dbReference = database.getReference("/bookBoxes")
+
+        dbReference.addValueEventListener(object : ValueEventListener{
+            @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (bookBoxSnapshot in snapshot.children){
+                    val name = bookBoxSnapshot.child("name")
+                        .getValue(String::class.java)
+
+                    val lat = bookBoxSnapshot.child("latitude")
+                        .getValue(String::class.java)?.toDouble()
+                    val lng = bookBoxSnapshot.child("longitude")
+                        .getValue(String::class.java)?.toDouble()
+
+                    val description = bookBoxSnapshot.child("description")
+                        .getValue(String::class.java)
+
+                    val imageURL = bookBoxSnapshot.child("imageUrl")
+                        .getValue(String::class.java)
+
+//                    val latLng = location?.let { getLatLngFromAddress(it) }
+
+                    if(lat !=null && lng !=null){
+                       val address = getAddressFromLatLng(44.63847887747145, -63.58979199265351)
+//                        Log.d("latlng from address", address)
+                        val bookBox = BookBox(name,address,description,imageURL)
+                        bookBoxes.add(bookBox)
+
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireContext(), "Failed to fetch data", Toast.LENGTH_SHORT).show()
+            }
+
+        })
 
 
-        // dummy text
-        places.add(LatLng(44.6375, -63.59075))
-        places.add(LatLng(44.6496389, -63.5716944))
-        places.add(LatLng(44.6465278, -63.5943611))
-        places.add(LatLng(44.63189566264618, -63.581212724391236))
-        places.add(LatLng(44.65878323733942, -63.60420573442021))
     }
 
     /**
@@ -263,16 +338,11 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             startActivity(Intent(context, AddingBookBoxActivity::class.java))
         }
     }
-
+        private fun navigateToBoxFragment() {
+            parentFragmentManager.beginTransaction().apply {
+                replace(R.id.fragment_container, BoxFragment()) // Use the ID of your container where fragments are placed
+                addToBackStack(null) // Add this transaction to the back stack
+                commit() // Commit the transaction
+            }
     }
-
-    private fun navigateToBoxFragment() {
-        activity?.supportFragmentManager?.beginTransaction()?.apply {
-            replace(R.id.fragment_container, BoxFragment()) // Use the ID of your container where fragments are placed
-            addToBackStack(null) // Add this transaction to the back stack
-            commit() // Commit the transaction
-        }
-    }
-
-
 }
