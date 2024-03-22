@@ -27,7 +27,7 @@
             android:name=".ProfileViewModel"
             android:exported="false" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".ProfileFragment"
             android:theme="@style/Theme.Group01Undergraduate"
             android:exported="false" />
 

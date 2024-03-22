@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileActivity">
+    tools:context=".ProfileFragment">
 
     <ImageView
         android:id="@+id/profile_image"
@@ -82,6 +82,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="292dp"
         android:text="logout"
+        android:backgroundTint="@color/primaryColor"
         app:layout_constraintBottom_toTopOf="@+id/btnDeleteAccount"
         app:layout_constraintStart_toEndOf="@+id/profile_image"
         app:layout_constraintTop_toTopOf="parent"
