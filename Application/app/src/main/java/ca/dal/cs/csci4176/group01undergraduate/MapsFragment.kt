@@ -17,7 +17,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.views.AddingBookBoxActivity
+import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.AddingBookBoxActivity
 import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BoxFragment
 import android.widget.Toast
 import androidx.annotation.RequiresApi

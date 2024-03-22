@@ -30,6 +30,7 @@ zxingAndroidEmbedded = "4.1.0"
 firebaseDatabaseKtx = "20.3.1"
 playServicesLocation = "21.2.0"
 
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
@@ -65,6 +66,7 @@ firebase-database = { group = "com.google.firebase", name = "firebase-database",
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

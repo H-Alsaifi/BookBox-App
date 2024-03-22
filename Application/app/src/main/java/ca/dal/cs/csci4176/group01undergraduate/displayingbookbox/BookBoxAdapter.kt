@@ -34,9 +34,8 @@ class BookBoxAdapter(
     inner class BookBoxViewHolder(private val binding: ItemBookBoxBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(bookBox: BookBox) {
             binding.nameTextView.text = bookBox.name
-            binding.locationTextView.text = bookBox.location
+            binding.locationTextView.text = "Lat: ${bookBox.location?.latitude}, Lon: ${bookBox.location?.longitude}"
             binding.descriptionTextView.text = bookBox.description
-
             // Load the image on a background thread
             Thread {
                 val bitmap = downloadImage(bookBox.imageUrl)
