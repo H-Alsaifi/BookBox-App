@@ -7,11 +7,12 @@ data class User(
     val email: String = "",
     val points: Int = 0,
     val rank: String = "Iron",
+    val profilePictureUri: String = "",
     val bookIds: List<String> = emptyList(),
     val bookBoxIds: List<String> = emptyList(),
     val favoriteBookBoxes: List<String> = emptyList()
 ){
-    constructor(): this("", "", 0, "Iron", emptyList(), emptyList(), emptyList())
+    constructor(): this("", "", 0, "Iron",  "",emptyList(), emptyList(), emptyList())
 }
 open class ProfileState {
     object Idle : ProfileState()

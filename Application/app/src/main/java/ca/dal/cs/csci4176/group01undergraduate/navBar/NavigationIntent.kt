@@ -6,4 +6,6 @@ sealed class NavigationIntent {
     object GoToSearch : NavigationIntent()
     object GoToAccount : NavigationIntent()
     object GoToMenu : NavigationIntent()
+
+//    object GoToSignIn : NavigationIntent()
 }
