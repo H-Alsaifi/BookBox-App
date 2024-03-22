@@ -10,26 +10,22 @@ class AddBookBoxModel {
     private val databaseReference = FirebaseDatabase.getInstance().reference
     private val storageReference = FirebaseStorage.getInstance().reference
 
-    suspend fun submitDetails(name: String, location: String, description: String, imageUri: Uri): Result<String> {
-        // Start a coroutine for database operations
+    suspend fun submitDetails(name: String, location: BookBoxLocation, description: String, imageUri: Uri): Result<String> {
         return try {
-            // Upload the picture first and get the URL
             val imageUrlResult = uploadPicture(imageUri)
-            val imageUrl = imageUrlResult.getOrThrow() // If uploadPicture fails, it will throw here
+            val imageUrl = imageUrlResult.getOrThrow()
 
-            // Create a map for the Book Box details
             val bookBoxDetails = hashMapOf(
                 "name" to name,
-                "location" to location,
+                "latitude" to location.latitude,
+                "longitude" to location.longitude,
                 "description" to description,
                 "imageUrl" to imageUrl.toString()
             )
 
-            // Push the new Book Box details to the Realtime Database and get the unique key
             val pushReference = databaseReference.child("bookBoxes").push()
             pushReference.setValue(bookBoxDetails).await()
             Result.success(pushReference.key ?: "Unknown Key")
-
         } catch (e: Exception) {
             Result.failure(e)
         }

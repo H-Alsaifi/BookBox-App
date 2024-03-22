@@ -5,6 +5,9 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.Intent
 import android.graphics.Color
+import android.location.Geocoder
+import android.net.Uri
+import android.os.Build
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
@@ -13,12 +16,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.views.AddingBookBoxActivity
+import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.AddingBookBoxActivity
 import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BoxFragment
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.models.BookBoxLocation
+import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BookBox
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -36,21 +43,28 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
 import com.google.maps.PendingResult
 import com.google.maps.internal.PolylineEncoding
 import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
+import com.squareup.picasso.Picasso
+import java.io.IOException
 
 class MapsFragment : Fragment(), OnMarkerClickListener{
 
+    // map
     private lateinit var map: GoogleMap
 
     // Halifax location
     private val northEast: LatLng = LatLng(44.684204, -63.543474)
     private val southWest: LatLng = LatLng(44.6209409, -63.629210)
-    private var places: ArrayList<LatLng> = ArrayList()
 
     // maps
     private lateinit var bottomSheetBehavior : BottomSheetBehavior<LinearLayout>
@@ -59,6 +73,13 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
     // polyline for directions
     private var currentPolyline: Polyline? = null
+
+    // database
+    private lateinit var database: FirebaseDatabase
+    private lateinit var dbReference: DatabaseReference
+
+    // bookbox
+    private lateinit var betterBookBox: HashMap<String, BookBox>
 
     /**
      * Acts as a callback
@@ -76,10 +97,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         }
         map.setOnMarkerClickListener(this)
 
-        addMarkers()
-
-
-
         map.uiSettings.isZoomControlsEnabled = true
     }
 
@@ -95,6 +112,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onMarkerClick(marker: Marker):Boolean {
 
         if(activity is MainActivity){
@@ -104,15 +122,29 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             val linearLayout = mainActivity
                 .findViewById<LinearLayout>(R.id.bottomSheetLayout)
 
-            // find the text view
-            linearLayout.findViewById<TextView>(R.id.coordinates)
-                .text = marker.position.toString()
 
-            // find the button
-            linearLayout.findViewById<Button>(R.id.getDirections)
-                .setOnClickListener{
-                    getDirections(marker.position)
-                }
+            betterBookBox.values.forEach {
+                if (it.location != null) linearLayout.findViewById<TextView>(R.id.bookBoxLocation)
+                    .text = getAddressFromLatLng(it.location.latitude, it.location.longitude)
+
+                Picasso
+                    .get()
+                    .load(it.imageUrl)
+                    .into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
+
+                // TODO(Add book for book box)
+                linearLayout.findViewById<Button>(R.id.bookBoxAddBook)
+                    .setOnClickListener{
+
+                    }
+
+                // find the button
+                linearLayout.findViewById<Button>(R.id.getDirections)
+                    .setOnClickListener{
+                        getDirections(marker.position)
+                    }
+            }
+
 
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
@@ -184,13 +216,43 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
      * icon taken from: https://www.figma.com/file/62O8YMjZOLkkTe9jqkmp61/coolicons-%7C-Free-Iconset-(Community)?type=design&t=Umarm5N5x9E9bXGJ-6
      */
     private fun addMarkers(){
-        places.forEach { place->
-            map.addMarker(
-                MarkerOptions()
-                    .position(place)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_book_box))
-            )
+        betterBookBox.values.forEach { bookBox->
+            if(bookBox.location != null){
+                map.addMarker(
+                    MarkerOptions()
+                        .position(LatLng(bookBox.location.latitude, bookBox.location.longitude))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_book_box))
+                )
+            }
         }
+    }
+
+    /**
+     * gets address from lat lng
+     */
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun getAddressFromLatLng(lat: Double, lng: Double): String {
+        val geocoder = Geocoder(requireContext())
+        var string = ""
+        try {
+           val addresses = geocoder.getFromLocation(lat,lng,1)
+            if (addresses != null) {
+                if (addresses.isNotEmpty()) {
+                    val address = addresses[0]
+                    string = String.format("%s %s, %s, %s %s",
+                        address.subThoroughfare,
+                        address.thoroughfare,
+                        address.subAdminArea,
+                        address.adminArea,
+                        address.postalCode)
+                    return string
+                }
+            }
+
+        } catch (e: IOException){
+            Log.d("Error", e.toString())
+        }
+        return string
     }
 
     /**
@@ -199,14 +261,49 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // initialize hashmap
+        betterBookBox = HashMap()
+
+        // database
+        database = FirebaseDatabase.getInstance()
+        dbReference = database.getReference("/bookBoxes")
+
+        dbReference.addValueEventListener(object : ValueEventListener{
+            @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (bookBoxSnapshot in snapshot.children){
+                    val name = bookBoxSnapshot.child("name")
+                        .getValue(String::class.java)
+
+                    val lat = bookBoxSnapshot.child("latitude")
+                        .getValue(Double::class.java)
+                    val lng = bookBoxSnapshot.child("longitude")
+                        .getValue(Double::class.java)
+
+                    val description = bookBoxSnapshot.child("description")
+                        .getValue(String::class.java)
+
+                    val imageURL = bookBoxSnapshot.child("imageUrl")
+                        .getValue(String::class.java)
+
+                    if(lat !=null && lng !=null){
+                        val bookBox = BookBox(name, BookBoxLocation(lat,lng),description,imageURL)
+
+                        // add bookBox to hashmap
+                        snapshot.key?.let { betterBookBox.put(it, bookBox) }
+
+                        addMarkers()
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireContext(), "Failed to fetch data", Toast.LENGTH_SHORT).show()
+            }
+
+        })
 
 
-        // dummy text
-        places.add(LatLng(44.6375, -63.59075))
-        places.add(LatLng(44.6496389, -63.5716944))
-        places.add(LatLng(44.6465278, -63.5943611))
-        places.add(LatLng(44.63189566264618, -63.581212724391236))
-        places.add(LatLng(44.65878323733942, -63.60420573442021))
     }
 
     /**
@@ -263,16 +360,11 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             startActivity(Intent(context, AddingBookBoxActivity::class.java))
         }
     }
-
-
-
-    private fun navigateToBoxFragment() {
-        activity?.supportFragmentManager?.beginTransaction()?.apply {
-            replace(R.id.fragment_container, BoxFragment()) // Use the ID of your container where fragments are placed
-            addToBackStack(null) // Add this transaction to the back stack
-            commit() // Commit the transaction
-        }
+        private fun navigateToBoxFragment() {
+            parentFragmentManager.beginTransaction().apply {
+                replace(R.id.fragment_container, BoxFragment()) // Use the ID of your container where fragments are placed
+                addToBackStack(null) // Add this transaction to the back stack
+                commit() // Commit the transaction
+            }
     }
-
-
 }
