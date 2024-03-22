@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.content.Intent
 import android.graphics.Color
 import android.location.Geocoder
+import android.net.Uri
 import android.os.Build
 import androidx.fragment.app.Fragment
 
@@ -15,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.AddingBookBoxActivity
@@ -22,6 +24,7 @@ import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BoxFragment
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.models.BookBoxLocation
 import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BookBox
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -51,6 +54,7 @@ import com.google.maps.PendingResult
 import com.google.maps.internal.PolylineEncoding
 import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
+import com.squareup.picasso.Picasso
 import java.io.IOException
 
 class MapsFragment : Fragment(), OnMarkerClickListener{
@@ -91,10 +95,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         }
         map.setOnMarkerClickListener(this)
 
-        addMarkers()
-
-
-
         map.uiSettings.isZoomControlsEnabled = true
     }
 
@@ -110,6 +110,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onMarkerClick(marker: Marker):Boolean {
 
         if(activity is MainActivity){
@@ -119,15 +120,34 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             val linearLayout = mainActivity
                 .findViewById<LinearLayout>(R.id.bottomSheetLayout)
 
-            // find the text view
-            linearLayout.findViewById<TextView>(R.id.coordinates)
-                .text = marker.position.toString()
+            val clickedBookBox = bookBoxes.find { bookBox ->
+                bookBox.location != null && bookBox.location.latitude == marker.position.latitude &&
+                        bookBox.location.longitude == marker.position.longitude
+            }
 
-            // find the button
-            linearLayout.findViewById<Button>(R.id.getDirections)
-                .setOnClickListener{
-                    getDirections(marker.position)
-                }
+            clickedBookBox?.let {
+                // find the text view
+                linearLayout.findViewById<TextView>(R.id.bookBoxName)
+                    .text = it.name
+
+                if (it.location != null) linearLayout.findViewById<TextView>(R.id.bookBoxLocation)
+                    .text = getAddressFromLatLng(it.location.latitude, it.location.longitude)
+
+                linearLayout.findViewById<TextView>(R.id.bookBoxDescription)
+                    .text = it.description
+
+                Picasso
+                    .get()
+                    .load(it.imageUrl)
+                    .into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
+
+                // find the button
+                linearLayout.findViewById<Button>(R.id.getDirections)
+                    .setOnClickListener{
+                        getDirections(marker.position)
+                    }
+            }
+
 
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
@@ -200,14 +220,19 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
      */
     private fun addMarkers(){
         bookBoxes.forEach { bookBox->
-            map.addMarker(
-                MarkerOptions()
-                    .position(LatLng(bookBox.location.latitude, bookBox.location.longitude))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_book_box))
-            )
+            if(bookBox.location != null){
+                map.addMarker(
+                    MarkerOptions()
+                        .position(LatLng(bookBox.location.latitude, bookBox.location.longitude))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_book_box))
+                )
+            }
         }
     }
 
+    /**
+     * gets address from lat lng
+     */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun getAddressFromLatLng(lat: Double, lng: Double): String {
         val geocoder = Geocoder(requireContext())
@@ -223,7 +248,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                         address.subAdminArea,
                         address.adminArea,
                         address.postalCode)
-
+                    return string
                 }
             }
 
@@ -253,9 +278,9 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                         .getValue(String::class.java)
 
                     val lat = bookBoxSnapshot.child("latitude")
-                        .getValue(String::class.java)?.toDouble()
+                        .getValue(Double::class.java)
                     val lng = bookBoxSnapshot.child("longitude")
-                        .getValue(String::class.java)?.toDouble()
+                        .getValue(Double::class.java)
 
                     val description = bookBoxSnapshot.child("description")
                         .getValue(String::class.java)
@@ -263,14 +288,11 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                     val imageURL = bookBoxSnapshot.child("imageUrl")
                         .getValue(String::class.java)
 
-//                    val latLng = location?.let { getLatLngFromAddress(it) }
-
                     if(lat !=null && lng !=null){
-                       val address = getAddressFromLatLng(44.63847887747145, -63.58979199265351)
-//                        Log.d("latlng from address", address)
-                        val bookBox = BookBox(name,address,description,imageURL)
+                        val bookBox = BookBox(name, BookBoxLocation(lat,lng),description,imageURL)
                         bookBoxes.add(bookBox)
 
+                        addMarkers()
                     }
                 }
             }

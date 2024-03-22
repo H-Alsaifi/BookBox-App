@@ -11,14 +11,36 @@
     android:orientation="vertical"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
+    <ImageView
+        android:id="@+id/bookBoxImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:srcCompat="@drawable/map_icon" />
+
     <TextView
-        android:id="@+id/coordinates"
+        android:id="@+id/bookBoxName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="2dp"
-        android:text="coordinates"
+        android:text="Name"
         android:textColor="#000000"
         android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/bookBoxLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="Location"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/bookBoxDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="Description"
+        android:textColor="#000000" />
 
     <Button
         android:id="@+id/getDirections"
