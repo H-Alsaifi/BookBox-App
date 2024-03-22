@@ -39,6 +39,14 @@
     <string name="dark_mode">Dark Mode</string>
     <string name="type_your_username">Type your username</string>
     <string name="map_button_text">Map</string>
+    <string name="contact_support">contact_support</string>
+
+    <!-- Technical support -->
+    <string name="name_hint2">Name</string>
+    <string name="email_hint">Email</string>
+    <string name="message_hint">Your message</string>
+    <string name="submit">Submit</string>
+
 
 
     <!-- EditText hints -->
