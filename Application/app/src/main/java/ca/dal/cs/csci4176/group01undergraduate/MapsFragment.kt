@@ -59,6 +59,7 @@ import java.io.IOException
 
 class MapsFragment : Fragment(), OnMarkerClickListener{
 
+    // map
     private lateinit var map: GoogleMap
 
     // Halifax location
@@ -76,10 +77,10 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     // database
     private lateinit var database: FirebaseDatabase
     private lateinit var dbReference: DatabaseReference
-    private lateinit var bookBoxes: ArrayList<BookBox>
 
     // bookbox
     private lateinit var betterBookBox: HashMap<String, BookBox>
+
     /**
      * Acts as a callback
      */
@@ -121,13 +122,8 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             val linearLayout = mainActivity
                 .findViewById<LinearLayout>(R.id.bottomSheetLayout)
 
-            val clickedBookBox = bookBoxes.find { bookBox ->
-                bookBox.location != null && bookBox.location.latitude == marker.position.latitude &&
-                        bookBox.location.longitude == marker.position.longitude
-            }
 
-            clickedBookBox?.let {
-
+            betterBookBox.values.forEach {
                 if (it.location != null) linearLayout.findViewById<TextView>(R.id.bookBoxLocation)
                     .text = getAddressFromLatLng(it.location.latitude, it.location.longitude)
 
@@ -220,7 +216,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
      * icon taken from: https://www.figma.com/file/62O8YMjZOLkkTe9jqkmp61/coolicons-%7C-Free-Iconset-(Community)?type=design&t=Umarm5N5x9E9bXGJ-6
      */
     private fun addMarkers(){
-        bookBoxes.forEach { bookBox->
+        betterBookBox.values.forEach { bookBox->
             if(bookBox.location != null){
                 map.addMarker(
                     MarkerOptions()
@@ -265,8 +261,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        bookBoxes = ArrayList()
-
+        // initialize hashmap
         betterBookBox = HashMap()
 
         // database
@@ -293,8 +288,8 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
                     if(lat !=null && lng !=null){
                         val bookBox = BookBox(name, BookBoxLocation(lat,lng),description,imageURL)
-                        bookBoxes.add(bookBox)
 
+                        // add bookBox to hashmap
                         snapshot.key?.let { betterBookBox.put(it, bookBox) }
 
                         addMarkers()
