@@ -89,6 +89,8 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
         map = it
 
+        addMarkers()
+
 
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
@@ -292,7 +294,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                         // add bookBox to hashmap
                         snapshot.key?.let { betterBookBox.put(it, bookBox) }
 
-                        addMarkers()
                     }
                 }
             }
@@ -336,16 +337,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync{
-            it.setOnMapLoadedCallback{
-                val halifaxBounds = LatLngBounds
-                    .builder()
-                    .include(northEast)
-                    .include(southWest)
-                    .build()
-                it.moveCamera(CameraUpdateFactory.newLatLngBounds(halifaxBounds, 10))
-            }
-        }
         mapFragment?.getMapAsync(callback)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
@@ -360,11 +351,11 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             startActivity(Intent(context, AddingBookBoxActivity::class.java))
         }
     }
-        private fun navigateToBoxFragment() {
-            parentFragmentManager.beginTransaction().apply {
-                replace(R.id.fragment_container, BoxFragment()) // Use the ID of your container where fragments are placed
-                addToBackStack(null) // Add this transaction to the back stack
-                commit() // Commit the transaction
-            }
+    private fun navigateToBoxFragment() {
+        parentFragmentManager.beginTransaction().apply {
+            replace(R.id.fragment_container, BoxFragment()) // Use the ID of your container where fragments are placed
+            addToBackStack(null) // Add this transaction to the back stack
+            commit() // Commit the transaction
+        }
     }
 }
