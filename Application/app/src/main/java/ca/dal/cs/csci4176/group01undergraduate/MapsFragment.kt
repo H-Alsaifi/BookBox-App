@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.content.Intent
 import android.graphics.Color
 import android.location.Geocoder
-import android.net.Uri
 import android.os.Build
 import androidx.fragment.app.Fragment
 
@@ -81,6 +80,8 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     // bookbox
     private lateinit var betterBookBox: HashMap<String, BookBox>
 
+    private var markerBookBoxIdMap = HashMap<Marker, String>()
+
     /**
      * Acts as a callback
      */
@@ -136,6 +137,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                 linearLayout.findViewById<Button>(R.id.bookBoxAddBook)
                     .setOnClickListener{
 
+
                     }
 
                 // find the button
@@ -144,6 +146,34 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                         getDirections(marker.position)
                     }
             }
+
+//            // Assuming 'betterBookBox' is a Map with keys as book box IDs
+//            betterBookBox.forEach { (key, value) ->
+//                if (value.location != null) linearLayout.findViewById<TextView>(R.id.bookBoxLocation)
+//                    .text = getAddressFromLatLng(value.location.latitude, value.location.longitude)
+//
+//                Picasso
+//                    .get()
+//                    .load(value.imageUrl)
+//                    .into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
+//
+//                // Add book for book box button click listener
+//                linearLayout.findViewById<Button>(R.id.bookBoxAddBook).setOnClickListener{
+//                    // Here 'key' is the book box ID (selectedBookBoxKey)
+//
+//                    // Create an Intent to start AddBookActivity with the book box ID
+//                    val intent = Intent(context, AddBookActivity::class.java).apply {
+//                        putExtra("BOOK_BOX_KEY", key)
+//                        Log.d("MapsFragment", "Passing book box ID: $key")
+//                    }
+//                    startActivity(intent)
+//                }
+//
+//                // Get directions button click listener
+//                linearLayout.findViewById<Button>(R.id.getDirections).setOnClickListener{
+//                    getDirections(marker.position)
+//                }
+//            }
 
 
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -287,7 +317,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                         .getValue(String::class.java)
 
                     if(lat !=null && lng !=null){
-                        val bookBox = BookBox(name, BookBoxLocation(lat,lng),description,imageURL)
+                        val bookBox = BookBox(name, BookBoxLocation(lat,lng),description,imageURL, mutableListOf())
 
                         // add bookBox to hashmap
                         snapshot.key?.let { betterBookBox.put(it, bookBox) }
