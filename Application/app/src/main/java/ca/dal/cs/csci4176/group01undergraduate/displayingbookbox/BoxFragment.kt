@@ -66,7 +66,7 @@ class BoxFragment : Fragment() {
                     val latitude = child.child("location/latitude").getValue(Double::class.java) ?: 0.0
                     val longitude = child.child("location/longitude").getValue(Double::class.java) ?: 0.0
                     val location = BookBoxLocation(latitude, longitude)
-                    val bookIDs = child.child("bookIDs").value as MutableList<String>
+                    val bookIDs = child.child("bookIDs").value as? MutableList<String> ?: mutableListOf(" ")
 
                     BookBox(name, location, description, imageUrl, bookIDs)
                 }

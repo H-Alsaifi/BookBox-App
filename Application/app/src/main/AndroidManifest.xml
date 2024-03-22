@@ -31,6 +31,10 @@
             android:name=".ProfileFragment"
             android:theme="@style/Theme.Group01Undergraduate"
             android:exported="false" />
+        <activity
+            android:name=".addingbookbox.AddingBookBoxActivity"
+            android:theme="@style/Theme.Group01Undergraduate"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -63,7 +67,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="true" />
 
     </application>
 

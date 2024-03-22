@@ -20,6 +20,7 @@ import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.BookBoxViewModel
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.viewmodels.BookBoxViewModelFactory
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.BookBoxRepository
 import androidx.lifecycle.lifecycleScope
+import ca.dal.cs.csci4176.group01undergraduate.MainActivity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -129,10 +130,8 @@ class AddingBookBoxActivity : AppCompatActivity() {
 
     private fun navigateToMap() {
         Log.d("AddingBookBoxActivity", "Navigating to MapsFragment")
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.fragment_container, MapsFragment())
-            commit()
-        }
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
     companion object {

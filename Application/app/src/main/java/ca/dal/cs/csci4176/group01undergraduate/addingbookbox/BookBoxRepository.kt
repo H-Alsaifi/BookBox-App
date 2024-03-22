@@ -26,7 +26,7 @@ class BookBoxRepository(private val context: Context) {
     suspend fun submitDetails(name: String, description: String, imageUri: Uri, location: BookBoxLocation): Result<String> {
         return try {
             val imageUrl = uploadPicture(imageUri).getOrThrow()
-            val bookIDs = mutableListOf(" ", " ")
+            val bookIDs = mutableListOf(" ")
 
             val bookBoxDetails = mapOf(
                 "name" to name,
