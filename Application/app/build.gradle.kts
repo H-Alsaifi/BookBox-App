@@ -114,6 +114,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.zxing.android.embedded)
+    implementation(libs.play.services.location)
     //end
 
     // google maps
