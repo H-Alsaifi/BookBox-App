@@ -64,7 +64,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     // Halifax location
     private val northEast: LatLng = LatLng(44.684204, -63.543474)
     private val southWest: LatLng = LatLng(44.6209409, -63.629210)
-    private var places: ArrayList<LatLng> = ArrayList()
 
     // maps
     private lateinit var bottomSheetBehavior : BottomSheetBehavior<LinearLayout>
@@ -79,6 +78,8 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     private lateinit var dbReference: DatabaseReference
     private lateinit var bookBoxes: ArrayList<BookBox>
 
+    // bookbox
+    private lateinit var betterBookBox: HashMap<String, BookBox>
     /**
      * Acts as a callback
      */
@@ -266,6 +267,8 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
         bookBoxes = ArrayList()
 
+        betterBookBox = HashMap()
+
         // database
         database = FirebaseDatabase.getInstance()
         dbReference = database.getReference("/bookBoxes")
@@ -291,6 +294,8 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                     if(lat !=null && lng !=null){
                         val bookBox = BookBox(name, BookBoxLocation(lat,lng),description,imageURL)
                         bookBoxes.add(bookBox)
+
+                        snapshot.key?.let { betterBookBox.put(it, bookBox) }
 
                         addMarkers()
                     }
