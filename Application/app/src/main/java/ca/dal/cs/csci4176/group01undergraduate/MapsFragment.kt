@@ -126,20 +126,20 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             }
 
             clickedBookBox?.let {
-                // find the text view
-                linearLayout.findViewById<TextView>(R.id.bookBoxName)
-                    .text = it.name
 
                 if (it.location != null) linearLayout.findViewById<TextView>(R.id.bookBoxLocation)
                     .text = getAddressFromLatLng(it.location.latitude, it.location.longitude)
-
-                linearLayout.findViewById<TextView>(R.id.bookBoxDescription)
-                    .text = it.description
 
                 Picasso
                     .get()
                     .load(it.imageUrl)
                     .into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
+
+                // TODO(Add book for book box)
+                linearLayout.findViewById<Button>(R.id.bookBoxAddBook)
+                    .setOnClickListener{
+
+                    }
 
                 // find the button
                 linearLayout.findViewById<Button>(R.id.getDirections)

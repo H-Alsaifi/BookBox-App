@@ -18,15 +18,6 @@
         app:srcCompat="@drawable/map_icon" />
 
     <TextView
-        android:id="@+id/bookBoxName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:text="Name"
-        android:textColor="#000000"
-        android:textSize="16sp" />
-
-    <TextView
         android:id="@+id/bookBoxLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,18 +25,16 @@
         android:text="Location"
         android:textColor="#000000" />
 
-    <TextView
-        android:id="@+id/bookBoxDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:text="Description"
-        android:textColor="#000000" />
-
     <Button
         android:id="@+id/getDirections"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Get Directions" />
+
+    <Button
+        android:id="@+id/bookBoxAddBook"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add books" />
 
 </LinearLayout>
