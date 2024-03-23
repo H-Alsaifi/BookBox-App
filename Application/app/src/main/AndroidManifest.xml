@@ -7,8 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
-
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -21,6 +19,9 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
+            android:name=".displayBookBox"
+            android:exported="false" />
+        <activity
             android:name=".ProfileIntent"
             android:exported="false" />
         <activity
@@ -28,8 +29,8 @@
             android:exported="false" />
         <activity
             android:name=".ProfileActivity"
-            android:theme="@style/Theme.Group01Undergraduate"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Group01Undergraduate" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

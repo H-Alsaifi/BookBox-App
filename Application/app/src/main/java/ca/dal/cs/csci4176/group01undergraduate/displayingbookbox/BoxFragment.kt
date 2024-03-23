@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.AddingBookBoxActivity
 import com.google.firebase.database.FirebaseDatabase
 import android.content.Intent
+import ca.dal.cs.csci4176.group01undergraduate.SignIn
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.models.BookBoxLocation
+import ca.dal.cs.csci4176.group01undergraduate.displayBookBox
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -81,6 +83,14 @@ class BoxFragment : Fragment() {
 
     private fun onBookBoxClicked(bookBox: BookBox) {
         // Handle the click event for each book box, e.g., navigate to a detail page, or show options to add, view, or delete
+        val intent = Intent(context, displayBookBox::class.java)
+        // need to get username to pass on aswell
+        intent.putExtra("name", bookBox.name)
+        // will pass long and lat once updated
+        //intent.putExtra("location", bookBox.location)
+        intent.putExtra("description", bookBox.description)
+        intent.putExtra("imageUrl", bookBox.imageUrl)
+        startActivity(intent)
     }
 
     override fun onDestroyView() {
