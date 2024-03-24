@@ -27,6 +27,7 @@ class displayBookBox : AppCompatActivity() {
         val boxDesc: EditText = findViewById<EditText?>(R.id.boxDesc)
         val favBtn: Button = findViewById(R.id.favouriteBox)
 
+        // displays the details of the book box that was passed from the intent
         val name = intent.getStringExtra("name")
         val description = intent.getStringExtra("description")
         val imageUrl = intent.getStringExtra("imageUrl")
