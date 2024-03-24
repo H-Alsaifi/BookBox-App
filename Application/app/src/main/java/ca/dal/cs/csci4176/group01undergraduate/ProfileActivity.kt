@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import ca.dal.cs.csci4176.group01undergraduate.ui.theme.RateBook
 import com.google.firebase.auth.FirebaseAuth
 
 class ProfileActivity : AppCompatActivity() {
@@ -41,6 +42,7 @@ class ProfileActivity : AppCompatActivity() {
         val EditPassword: ImageView = findViewById(R.id.btnEditPassword)
         val deleteAccountButton: Button = findViewById(R.id.btnDeleteAccount)
         val logoutButton: Button = findViewById(R.id.btnLogout)
+        val rateBtn: Button = findViewById(R.id.rateBtn)
         profileImageView = findViewById(R.id.profile_image)
 
         val oldPasswordEditText = findViewById<EditText>(R.id.oldPassword)
@@ -52,6 +54,11 @@ class ProfileActivity : AppCompatActivity() {
                 nameTextView.text = newName
                 viewModel.updateDisplayName(newName)
             }
+        }
+
+        rateBtn.setOnClickListener {
+            val intent = Intent(this, RateBook::class.java)
+            startActivity(intent)
         }
 
         profileImageView.setOnClickListener {
