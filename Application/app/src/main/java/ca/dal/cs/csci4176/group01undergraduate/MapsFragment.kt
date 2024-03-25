@@ -455,6 +455,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     }
 
     // has to be altered to account for negative long/lat values, calculates the distance between two points
+    // add if statements to convert negatives to positives and get the difference in value
     private fun getDistance(lat: Double, long: Double): Double {
         var distance: Double
         if (lat < latitude) {

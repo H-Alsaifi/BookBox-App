@@ -30,8 +30,12 @@ class displayBookBox : AppCompatActivity() {
         val description = intent.getStringExtra("description")
         //val imageUrl = intent.getStringExtra("imageUrl")
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("users")
+        // getting the firebase reference to the users
+        var db: FirebaseDatabase= FirebaseDatabase.getInstance()
+        databaseReference = db.getReference()
+        databaseReference.child("users")
 
+        // displaying the book box information for the user
         boxName.setText(name)
         boxDesc.setText(description)
 
