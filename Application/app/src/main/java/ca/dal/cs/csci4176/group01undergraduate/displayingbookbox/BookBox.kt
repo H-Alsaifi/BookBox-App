@@ -7,5 +7,6 @@ data class BookBox (
     // Replace the String type with the BookBoxLocation class for the location
     val location: BookBoxLocation? = null,
     val description: String? = null,
-    val imageUrl: String? = null
+    val imageUrl: String? = null,
+    val bookIDs: MutableList<String> = mutableListOf()
 )
