@@ -10,8 +10,8 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import android.widget.Button
 import ca.dal.cs.csci4176.group01undergraduate.technicalSupport.ContactFormFragment
-import ca.dal.cs.csci4176.group01undergraduate.R
 
+@Suppress("DEPRECATION")
 class MenuFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +38,11 @@ class MenuFragment : Fragment() {
         buttonContactSupport.setOnClickListener {
             // Replace the current fragment with ContactFormFragment
             fragmentManager?.beginTransaction()?.replace(R.id.fragment_container, ContactFormFragment())?.addToBackStack(null)?.commit()
+        }
+
+        val buttonAboutUs= view.findViewById<Button>(R.id.buttonAboutUs)
+        buttonAboutUs.setOnClickListener {
+            fragmentManager?.beginTransaction()?.replace(R.id.fragment_container, AboutUsFragment())?.addToBackStack(null)?.commit()
         }
 
         return view
