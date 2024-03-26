@@ -39,7 +39,6 @@ class ResetPasswordActivity : AppCompatActivity() {
                                 // Email exists, proceed to send reset link
                                 auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
-//                                        sendPasswordChangeNotification(context = applicationContext)
                                         displayMessage("Reset link sent to your email.")
 //                                        Toast.makeText(applicationContext, "Reset link sent to your email.", Toast.LENGTH_LONG).show()
                                         finish()
@@ -55,16 +54,6 @@ class ResetPasswordActivity : AppCompatActivity() {
                             }
                         }
 
-                        private fun sendPasswordChangeNotification() {
-                            val currentUser = auth.currentUser
-                            if (currentUser != null) {
-                                displayMessage("Your password has been changed.")
-//                                Toast.makeText(applicationContext, "Your password has been changed.", Toast.LENGTH_LONG).show()
-                            } else {
-                                displayMessage("Failed to send password change notification: User not authenticated.")
-//                                Toast.makeText(applicationContext, "Failed to send password change notification: User not authenticated.", Toast.LENGTH_LONG).show()
-                            }
-                        }
 
                         override fun onCancelled(databaseError: DatabaseError) {
                             // Handle possible errors

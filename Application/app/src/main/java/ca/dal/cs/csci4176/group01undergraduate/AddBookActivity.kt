@@ -56,7 +56,6 @@ class AddBookActivity : AppCompatActivity() {
                 viewModel.addBookToFirebase(book, bookBoxKey) { isSuccess, error ->
                     showLoading(false)
                     if (isSuccess) {
-//                        sendBookAddedNotification(context = applicationContext)
                         displayMessage("Book added successfully")
 //                        Toast.makeText(this@AddBookActivity, "Book added successfully", Toast.LENGTH_SHORT).show()
                         restartActivity()
@@ -177,39 +176,6 @@ class AddBookActivity : AppCompatActivity() {
         }, 2000)
     }
 
-//
-//    @SuppressLint("MissingPermission")
-//    fun sendBookAddedNotification(context: Context) {
-//        createNotificationChannel(context)
-//
-//        val intent = Intent(context, ResetPasswordActivity::class.java)
-//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_MUTABLE)
-//
-//        val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
-//            .setSmallIcon(R.drawable.ic_notification_icon)
-//            .setContentTitle("Book Added")
-//            .setContentText("Book has been Added successfully.")
-//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//            .setContentIntent(pendingIntent)
-//            .setAutoCancel(true)
-//
-//        with(NotificationManagerCompat.from(context)) {
-//            notify(NOTIFICATION_ID, notificationBuilder.build())
-//        }
-//    }
-//    private fun createNotificationChannel(context: Context) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val name = "Book added Notifications"
-//            val descriptionText = "Notifications for Book Added"
-//            val importance = NotificationManager.IMPORTANCE_DEFAULT
-//            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-//                description = descriptionText
-//            }
-//            val notificationManager: NotificationManager =
-//                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//            notificationManager.createNotificationChannel(channel)
-//        }
-//    }
+
 
 }
