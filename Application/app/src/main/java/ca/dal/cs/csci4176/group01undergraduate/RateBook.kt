@@ -21,9 +21,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class RateBook : AppCompatActivity() {
-    private lateinit var databaseReference: DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
-        FirebaseApp.initializeApp(this);
+        FirebaseApp.initializeApp(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_rate_book)
@@ -46,7 +45,8 @@ class RateBook : AppCompatActivity() {
         }
         // button to return the user to the previous page
         backBtn.setOnClickListener {
-            var Intent = Intent(this , ProfileActivity::class.java)
+            // the previous page is the profile activity
+            val Intent = Intent(this , ProfileActivity::class.java)
             startActivity(Intent)
         }
     }
@@ -54,7 +54,7 @@ class RateBook : AppCompatActivity() {
     // function takes the users rating and the name of the book being rated and updates its average rating value
     private fun setRating(userRating: Int, title: String, Context: Context) {
         // getting a new reference to to find the book titles
-        var databaseReference: DatabaseReference =
+        val databaseReference: DatabaseReference =
             FirebaseDatabase.getInstance().getReference("Book")
 
         // looking through the elements of the database
