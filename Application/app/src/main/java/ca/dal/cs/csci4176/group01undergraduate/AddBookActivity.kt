@@ -1,14 +1,27 @@
 package ca.dal.cs.csci4176.group01undergraduate
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.PixelFormat
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.view.Gravity
 import android.view.View
+import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import ca.dal.cs.csci4176.group01undergraduate.addBookISBN.Book
 import ca.dal.cs.csci4176.group01undergraduate.addBookISBN.BookRepository
@@ -20,6 +33,9 @@ import ca.dal.cs.csci4176.group01undergraduate.addBookISBN.BookViewModelFactory
 import com.google.zxing.integration.android.IntentIntegrator
 
 class AddBookActivity : AppCompatActivity() {
+//
+//    private val CHANNEL_ID = "BookAddedChannel"
+//    private val NOTIFICATION_ID = 12
 
     private lateinit var binding: ActivityAddBookBinding
     private val viewModel: BookViewModel by viewModels {
@@ -47,10 +63,13 @@ class AddBookActivity : AppCompatActivity() {
                 viewModel.addBookToFirebase(book) { isSuccess, error ->
                     showLoading(false)
                     if (isSuccess) {
-                        Toast.makeText(this@AddBookActivity, "Book added successfully", Toast.LENGTH_SHORT).show()
+//                        sendBookAddedNotification(context = applicationContext)
+                        displayMessage("Book added successfully")
+//                        Toast.makeText(this@AddBookActivity, "Book added successfully", Toast.LENGTH_SHORT).show()
                         restartActivity()
                     } else {
-                        Toast.makeText(this@AddBookActivity, "Failed to add book: $error", Toast.LENGTH_SHORT).show()
+                        displayMessage("Failed to add book: $error")
+//                        Toast.makeText(this@AddBookActivity, "Failed to add book: $error", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -84,7 +103,8 @@ class AddBookActivity : AppCompatActivity() {
             if (isGranted) {
                 initiateScan()
             } else {
-                Toast.makeText(this, "Camera permission is required to scan ISBN codes.", Toast.LENGTH_SHORT).show()
+                displayMessage("Camera permission is required to scan ISBN codes.")
+//                Toast.makeText(this, "Camera permission is required to scan ISBN codes.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -143,5 +163,61 @@ class AddBookActivity : AppCompatActivity() {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
+
+    private fun displayMessage(message: String) {
+        val messageView = layoutInflater.inflate(R.layout.display_message, null) as TextView
+        messageView.text = message
+
+        val params = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            PixelFormat.TRANSLUCENT
+        )
+        params.gravity = Gravity.CENTER
+
+        val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+        windowManager.addView(messageView, params)
+
+        Handler().postDelayed({
+            windowManager.removeView(messageView)
+        }, 2000)
+    }
+
+//
+//    @SuppressLint("MissingPermission")
+//    fun sendBookAddedNotification(context: Context) {
+//        createNotificationChannel(context)
+//
+//        val intent = Intent(context, ResetPasswordActivity::class.java)
+//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_MUTABLE)
+//
+//        val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
+//            .setSmallIcon(R.drawable.ic_notification_icon)
+//            .setContentTitle("Book Added")
+//            .setContentText("Book has been Added successfully.")
+//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//            .setContentIntent(pendingIntent)
+//            .setAutoCancel(true)
+//
+//        with(NotificationManagerCompat.from(context)) {
+//            notify(NOTIFICATION_ID, notificationBuilder.build())
+//        }
+//    }
+//    private fun createNotificationChannel(context: Context) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            val name = "Book added Notifications"
+//            val descriptionText = "Notifications for Book Added"
+//            val importance = NotificationManager.IMPORTANCE_DEFAULT
+//            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+//                description = descriptionText
+//            }
+//            val notificationManager: NotificationManager =
+//                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//            notificationManager.createNotificationChannel(channel)
+//        }
+//    }
 
 }

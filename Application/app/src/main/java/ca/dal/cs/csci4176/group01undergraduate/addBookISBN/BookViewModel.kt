@@ -61,6 +61,7 @@ fun addBookToFirebase(book: Book, result: (Boolean, String?) -> Unit) {
                         userRef.child("points").setValue(newPoints).addOnCompleteListener { userTask ->
                             if (userTask.isSuccessful) {
                                 result(true, null) // Success: Book added and points updated
+
                             } else {
                                 result(false, userTask.exception?.message ?: "Failed to update user points")
                             }
@@ -79,5 +80,6 @@ fun addBookToFirebase(book: Book, result: (Boolean, String?) -> Unit) {
         result(false, "Failed to generate a unique key for the book")
     }
 }
+
 
 }
