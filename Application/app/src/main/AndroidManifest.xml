@@ -19,7 +19,7 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
-            android:name=".ui.theme.RateBook"
+            android:name=".RateBook"
             android:exported="false" />
         <activity
             android:name=".displayBookBox"
