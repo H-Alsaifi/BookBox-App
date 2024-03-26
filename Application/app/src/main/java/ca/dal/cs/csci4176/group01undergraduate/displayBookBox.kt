@@ -38,7 +38,7 @@ class displayBookBox : AppCompatActivity() {
         boxName.setText(name)
         boxDesc.setText(description)
 
-        // if the user clicks on the bookbox then storing it under their favourites in firebase
+        /// if the user clicks on the bookbox then storing it under their favourites in firebase
         favBtn.setOnClickListener() {
             // has to be switched to key value
             databaseReference.child("favourites").setValue(boxName)
