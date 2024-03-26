@@ -140,8 +140,6 @@ class ProfileViewModel : ViewModel() {
                 }.addOnFailureListener {
                     _state.value = ProfileState.Error("Failed to fetch user data")
                 }
-        } ?: run {
-            _state.value = ProfileState.Error("User not logged in")
         }
     }
 
@@ -155,3 +153,5 @@ class ProfileViewModel : ViewModel() {
     }
 
 }
+
+

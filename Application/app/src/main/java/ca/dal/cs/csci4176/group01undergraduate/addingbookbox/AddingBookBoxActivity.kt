@@ -20,6 +20,7 @@ import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.BookBoxViewModel
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.viewmodels.BookBoxViewModelFactory
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.BookBoxRepository
 import androidx.lifecycle.lifecycleScope
+import ca.dal.cs.csci4176.group01undergraduate.MainActivity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -42,6 +43,19 @@ class AddingBookBoxActivity : AppCompatActivity() {
             ) == PackageManager.PERMISSION_GRANTED
         }
     }
+
+    // Define a permission launcher for location permission request
+    private val requestLocationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission was granted, proceed with fetching location
+                fetchLocation()
+            } else {
+                // Permission was denied, show an explanatory toast or dialog
+                Toast.makeText(this, "Location permission is required to use this feature.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
     // Initialize the picture picker launcher
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -77,7 +91,11 @@ class AddingBookBoxActivity : AppCompatActivity() {
             }
             binding.getLocationButton.setOnClickListener {
                 // Dispatch FetchCurrentLocation intent and observe the change
-                viewModel.offerIntent(BookBoxIntent.FetchCurrentLocation)
+                if (!hasLocationPermission()) {
+                    requestLocationPermission()
+                } else {
+                    viewModel.offerIntent(BookBoxIntent.FetchCurrentLocation)
+                }
             }
             mapButton.setOnClickListener {
                 navigateToMap()
@@ -112,22 +130,24 @@ class AddingBookBoxActivity : AppCompatActivity() {
 
     private fun navigateToMap() {
         Log.d("AddingBookBoxActivity", "Navigating to MapsFragment")
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.fragment_container, MapsFragment())
-            commit()
-        }
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
+//    private fun requestLocationPermission() {
+//        ActivityCompat.requestPermissions(
+//            this,
+//            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+//            LOCATION_PERMISSION_REQUEST_CODE
+//        )
+//    }
     private fun requestLocationPermission() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-            LOCATION_PERMISSION_REQUEST_CODE
-        )
+        // Request fine location permission using the permission launcher
+        requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
 

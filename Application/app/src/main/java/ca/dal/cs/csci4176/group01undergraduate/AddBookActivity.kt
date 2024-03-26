@@ -1,16 +1,12 @@
 package ca.dal.cs.csci4176.group01undergraduate
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.os.Handler
 import android.view.Gravity
 import android.view.View
@@ -20,8 +16,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import ca.dal.cs.csci4176.group01undergraduate.addBookISBN.Book
 import ca.dal.cs.csci4176.group01undergraduate.addBookISBN.BookRepository
@@ -33,9 +27,6 @@ import ca.dal.cs.csci4176.group01undergraduate.addBookISBN.BookViewModelFactory
 import com.google.zxing.integration.android.IntentIntegrator
 
 class AddBookActivity : AppCompatActivity() {
-//
-//    private val CHANNEL_ID = "BookAddedChannel"
-//    private val NOTIFICATION_ID = 12
 
     private lateinit var binding: ActivityAddBookBinding
     private val viewModel: BookViewModel by viewModels {
@@ -60,7 +51,9 @@ class AddBookActivity : AppCompatActivity() {
         binding.btnAddBook.setOnClickListener {
             lastFetchedBook?.let { book ->
                 showLoading(true)
-                viewModel.addBookToFirebase(book) { isSuccess, error ->
+                val bookBoxKey = intent.getStringExtra("BOOK_BOX_KEY")
+                Log.d("AddBookActivity", "Received book box ID: $bookBoxKey")
+                viewModel.addBookToFirebase(book, bookBoxKey) { isSuccess, error ->
                     showLoading(false)
                     if (isSuccess) {
 //                        sendBookAddedNotification(context = applicationContext)
@@ -103,8 +96,7 @@ class AddBookActivity : AppCompatActivity() {
             if (isGranted) {
                 initiateScan()
             } else {
-                displayMessage("Camera permission is required to scan ISBN codes.")
-//                Toast.makeText(this, "Camera permission is required to scan ISBN codes.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Camera permission is required to scan ISBN codes.", Toast.LENGTH_SHORT).show()
             }
         }
 

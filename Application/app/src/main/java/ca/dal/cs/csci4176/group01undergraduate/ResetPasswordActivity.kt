@@ -18,8 +18,6 @@ import com.google.firebase.database.ValueEventListener
 
 class ResetPasswordActivity : AppCompatActivity() {
 
-//    private val CHANNEL_ID = "PasswordChangeChannel"
-//    private val NOTIFICATION_ID = 12
     private lateinit var binding: ActivityResetPasswordBinding
     private lateinit var auth: FirebaseAuth
 
@@ -100,37 +98,5 @@ class ResetPasswordActivity : AppCompatActivity() {
             windowManager.removeView(messageView)
         }, 2000)
     }
-//    @SuppressLint("MissingPermission")
-//    fun sendPasswordChangeNotification(context: Context) {
-//        createNotificationChannel(context)
-//
-//        val intent = Intent(context, ResetPasswordActivity::class.java)
-//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_MUTABLE)
-//
-//        val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
-//            .setSmallIcon(R.drawable.ic_notification_icon)
-//            .setContentTitle("Password Changed")
-//            .setContentText("Your password has been changed successfully.")
-//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//            .setContentIntent(pendingIntent)
-//            .setAutoCancel(true)
-//
-//        with(NotificationManagerCompat.from(context)) {
-//            notify(NOTIFICATION_ID, notificationBuilder.build())
-//        }
-//    }
-//    private fun createNotificationChannel(context: Context) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val name = "Password Change Notifications"
-//            val descriptionText = "Notifications for password changes"
-//            val importance = NotificationManager.IMPORTANCE_DEFAULT
-//            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-//                description = descriptionText
-//            }
-//            val notificationManager: NotificationManager =
-//                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//            notificationManager.createNotificationChannel(channel)
-//        }
-//    }
+
 }

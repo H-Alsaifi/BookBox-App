@@ -71,9 +71,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showProfileFragment() {
-        val intent = Intent(this, ProfileActivity::class.java)
-        startActivity(intent)
-        finish()
+        val fragment = ProfileFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
 
     private fun showMapFragment(){
