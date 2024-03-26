@@ -43,7 +43,7 @@ class RateBook : AppCompatActivity() {
             val userRating: Int = ratingBar.rating.toInt()
             setRating(userRating, bookTitle, this)
         }
-        // button to return the user to the previous page
+        /// button to return the user to the previous page
         backBtn.setOnClickListener {
             // the previous page is the profile activity
             val Intent = Intent(this , ProfileActivity::class.java)
