@@ -60,4 +60,8 @@
     <string name="about_us_text">The Book Box is an application that helps book readers in finding books in an easy and cheap way.\n The application was done by the help of 9 Undergrad Students at the University of Dalhousie.</string>
     <string name="about_us">About Us</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 </resources>

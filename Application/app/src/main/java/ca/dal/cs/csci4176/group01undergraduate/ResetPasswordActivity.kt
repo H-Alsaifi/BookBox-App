@@ -1,6 +1,12 @@
 package ca.dal.cs.csci4176.group01undergraduate
 
+
+import android.graphics.PixelFormat
+import android.os.Handler
 import android.os.Bundle
+import android.view.Gravity
+import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ca.dal.cs.csci4176.group01undergraduate.databinding.ActivityResetPasswordBinding
@@ -33,17 +39,21 @@ class ResetPasswordActivity : AppCompatActivity() {
                                 // Email exists, proceed to send reset link
                                 auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
-                                        Toast.makeText(applicationContext, "Reset link sent to your email.", Toast.LENGTH_LONG).show()
+                                        displayMessage("Reset link sent to your email.")
+//                                        Toast.makeText(applicationContext, "Reset link sent to your email.", Toast.LENGTH_LONG).show()
                                         finish()
                                     } else {
-                                        Toast.makeText(applicationContext, "Failed to send reset link.", Toast.LENGTH_LONG).show()
+                                        displayMessage("Failed to send reset link.")
+//                                        Toast.makeText(applicationContext, "Failed to send reset link.", Toast.LENGTH_LONG).show()
                                     }
                                 }
                             } else {
                                 // Email not registered
-                                Toast.makeText(applicationContext, "Email not recognized.", Toast.LENGTH_LONG).show()
+                                displayMessage("Email not recognized.")
+//                                Toast.makeText(applicationContext, "Email not recognized.", Toast.LENGTH_LONG).show()
                             }
                         }
+
 
                         override fun onCancelled(databaseError: DatabaseError) {
                             // Handle possible errors
@@ -51,8 +61,31 @@ class ResetPasswordActivity : AppCompatActivity() {
                         }
                     })
             } else {
-                Toast.makeText(applicationContext, "Please enter your email.", Toast.LENGTH_SHORT).show()
+                displayMessage("Please enter your email.")
+//                Toast.makeText(applicationContext, "Please enter your email.", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+    private fun displayMessage(message: String) {
+        val messageView = layoutInflater.inflate(R.layout.display_message, null) as TextView
+        messageView.text = message
+
+        val params = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            PixelFormat.TRANSLUCENT
+        )
+        params.gravity = Gravity.CENTER
+
+        val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+        windowManager.addView(messageView, params)
+
+        Handler().postDelayed({
+            windowManager.removeView(messageView)
+        }, 2000)
+    }
+
 }

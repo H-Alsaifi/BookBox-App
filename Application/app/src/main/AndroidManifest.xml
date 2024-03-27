@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -21,6 +22,9 @@
         tools:targetApi="31"
         android:requestLegacyExternalStorage="true">
 
+        <activity
+            android:name=".displayBookBox"
+            android:exported="false" />
         <activity
             android:name=".ProfileIntent"
             android:exported="false" />
