@@ -55,17 +55,25 @@ class ContactFormFragment : Fragment() {
                 is SubmissionResult.Success -> {
                     // Display a success message to the user
                     Toast.makeText(context, result.message, Toast.LENGTH_LONG).show()
-
-                    // Return to the previous menu, indicating completion
-                    navigateBackToMenu()
+                    // Clear the form fields for a new submission
+                    clearForm()
+                    // Optionally reset the ViewModel's submission state
+                    supportViewModel.resetSubmissionState()
+                    // navigate back
+                     navigateBackToMenu()
                 }
                 is SubmissionResult.Error -> {
                     // Display an error message to the user
                     Toast.makeText(context, result.error, Toast.LENGTH_LONG).show()
                 }
+                null -> {
+                    // Handle the case where there is no submission result
+                    // This block can be left empty if there is nothing specific to do
+                }
             }
         }
     }
+
 
     // Handles navigation back to the main menu or previous fragment
     private fun navigateBackToMenu() {
@@ -77,24 +85,27 @@ class ContactFormFragment : Fragment() {
 
     // Validates and submits the contact form data
     private fun submitForm() {
-        // Extract and trim input from text fields
         val name = editTextName.text.toString().trim()
         val email = editTextEmail.text.toString().trim()
         val message = editTextMessage.text.toString().trim()
 
-        // Validate that none of the fields are empty, providing feedback if they are
         if (name.isEmpty() || email.isEmpty() || message.isEmpty()) {
             Toast.makeText(context, "All fields are required.", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Validate the email format, providing feedback if invalid
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(context, "Please enter a valid email address.", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Submit the validated data through the ViewModel
         supportViewModel.submitSupportRequest(name, email, message)
+    }
+
+    // New method to clear the form
+    private fun clearForm() {
+        editTextName.setText("")
+        editTextEmail.setText("")
+        editTextMessage.setText("")
     }
 }
