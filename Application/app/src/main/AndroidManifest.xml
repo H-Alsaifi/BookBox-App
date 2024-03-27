@@ -23,6 +23,9 @@
         android:requestLegacyExternalStorage="true">
 
         <activity
+            android:name=".displayBookBox"
+            android:exported="false" />
+        <activity
             android:name=".ProfileIntent"
             android:exported="false" />
         <activity
