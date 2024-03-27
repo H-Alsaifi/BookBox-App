@@ -17,48 +17,86 @@ import kotlin.coroutines.resumeWithException
 import android.Manifest
 
 
+/**
+ * Repository class responsible for handling data operations for book boxes.
+ * It interacts with Firebase Realtime Database and Firebase Storage for storing book box details and images,
+ * and uses the Fused Location Provider for location data.
+ *
+ * @property context Context used for accessing the Fused Location Provider.
+ */
 class BookBoxRepository(private val context: Context) {
 
+    // Reference to the 'bookBoxes' node in Firebase Realtime Database
     private val databaseReference = FirebaseDatabase.getInstance().reference.child("bookBoxes")
+    // Reference to the 'bookBoxPictures' folder in Firebase Storage
     private val storageReference = FirebaseStorage.getInstance().reference.child("bookBoxPictures")
+    // Client for accessing the Fused Location Provider
     private val fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
 
-    suspend fun submitDetails(name: String, description: String, imageUri: Uri, location: BookBoxLocation): Result<String> {
+    /**
+     * Submits the details of a book box to Firebase Database and uploads its image to Firebase Storage.
+     *
+     * @param imageUri URI of the image to upload.
+     * @param location Location of the book box including latitude and longitude.
+     * @param description Description of the book box. Defaults to "No Description" if not provided.
+     * @return A [Result] containing the unique key of the newly added book box entry in the database if successful, or an exception if failed.
+     */
+    suspend fun submitDetails(imageUri: Uri, location: BookBoxLocation, description: String = "No Description"): Result<String> {
         return try {
+            // Upload the image and get its URL
             val imageUrl = uploadPicture(imageUri).getOrThrow()
+            // Initialize with a placeholder for book IDs, can be populated later
             val bookIDs = mutableListOf(" ")
 
+            // Prepare the details to be stored in Firebase Database
             val bookBoxDetails = mapOf(
-                "name" to name,
-                "description" to description,
+                "description" to if (description.isBlank()) "No Description" else description,
                 "imageUrl" to imageUrl.toString(),
                 "latitude" to location.latitude,
                 "longitude" to location.longitude,
                 "bookIDs" to bookIDs
             )
 
-
+            // Push the new book box entry to the database and store its details
             val pushReference = databaseReference.push()
             pushReference.setValue(bookBoxDetails).await()
+            // Return the unique key of the new entry
             Result.success(pushReference.key ?: "Unknown Key")
         } catch (e: Exception) {
+            // Return an error result in case of failure
             Result.failure(e)
         }
     }
 
+    /**
+     * Uploads an image to Firebase Storage and returns the URL to access it.
+     *
+     * @param pictureUri URI of the picture to be uploaded.
+     * @return A [Result] containing the URL of the uploaded image if successful, or an exception if failed.
+     */
     suspend fun uploadPicture(pictureUri: Uri): Result<Uri> {
+        // Generate a file name based on the URI's last segment or a timestamp if unavailable
         val pictureRef = storageReference.child(pictureUri.lastPathSegment ?: "unknown_${System.currentTimeMillis()}")
         return try {
+            // Upload the file to Firebase Storage
             pictureRef.putFile(pictureUri).await()
+            // Retrieve and return the download URL of the uploaded file
             val downloadUri = pictureRef.downloadUrl.await()
             Result.success(downloadUri)
         } catch (e: Exception) {
+            // Return an error result in case of failure
             Result.failure(e)
         }
     }
 
+    /**
+     * Fetches the current location of the device using the Fused Location Provider.
+     * Requires location permissions to be granted.
+     *
+     * @return A [Result] containing the current [BookBoxLocation] if successful, or an exception if failed or permissions are not granted.
+     */
     suspend fun getCurrentLocation(): Result<BookBoxLocation> = suspendCancellableCoroutine { continuation ->
-        // Check for permissions before accessing the location.
+        // Check for location permissions before accessing the device's location
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -67,27 +105,24 @@ class BookBoxRepository(private val context: Context) {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // Permission is not granted, resume with an exception.
+            // Resume with a failure result if permissions are not granted
             continuation.resume(Result.failure(SecurityException("Location permissions not granted")))
             return@suspendCancellableCoroutine
         }
 
-        // Now we can safely call lastLocation because we know the permission has been granted.
+        // Request the last known location and resume the coroutine with the result
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
+                // Resume with a success result containing the current location
                 continuation.resume(Result.success(BookBoxLocation(location.latitude, location.longitude)))
             } else {
+                // Resume with a failure result if the location is unavailable
                 continuation.resume(Result.failure(Exception("Location is not available")))
             }
         }.addOnFailureListener { exception ->
+            // Resume with an exception in case of failure
             continuation.resumeWithException(exception)
         }
     }
-
-
-    fun hasLocationPermission(): Boolean {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-    }
-
 }
+
