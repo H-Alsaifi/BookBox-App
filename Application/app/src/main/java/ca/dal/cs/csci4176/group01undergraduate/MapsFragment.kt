@@ -2,14 +2,19 @@ package ca.dal.cs.csci4176.group01undergraduate
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.content.Intent
 import android.graphics.Color
 import android.location.Geocoder
+import android.location.Location
+import android.location.LocationManager
+import android.net.Uri
 import android.os.Build
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +27,9 @@ import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.AddingBookBoxActivi
 import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BoxFragment
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.models.BookBoxLocation
 import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BookBox
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -55,8 +62,12 @@ import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
 import com.squareup.picasso.Picasso
 import java.io.IOException
+import kotlin.properties.Delegates
 
 class MapsFragment : Fragment(), OnMarkerClickListener{
+    // variables to store current latitude and longitude
+    var latitude by Delegates.notNull<Double>()
+    var longitude by Delegates.notNull<Double>()
 
     // map
     private lateinit var map: GoogleMap
@@ -449,6 +460,74 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             navigateToBoxFragment()
         }
 
+        view.findViewById<Button>(R.id.findFav).setOnClickListener {
+            // getting the firebase to find the users saved favourites
+            var database: FirebaseDatabase = FirebaseDatabase.getInstance()
+            var databaseReference: DatabaseReference = database.getReference("users")
+            // array to hold the users favourite book boxes
+            var favourites = emptyArray<String>()
+            // gets the nearest favourite bookbox and displays its location
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+                map.isMyLocationEnabled = true
+                getCurrentLocation()
+            }
+            // need to pass username through shared preferences to here
+            databaseReference.child("username").get().addOnSuccessListener {
+                // getting the favourites from the current user
+                if (it.exists()) {
+                    databaseReference = databaseReference.child("favourites")
+                    databaseReference.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            if (snapshot.exists()) {
+                                for (contactSnap in snapshot.children) {
+                                    val fav = contactSnap.value
+                                    favourites += (fav!!).toString()
+                                }
+                            }
+                        }
+                        override fun onCancelled(error: DatabaseError) {
+                            // error finding data
+                        }
+                    })
+                }
+            }
+            var closest: String
+            var minDistance: Double = 0.0
+            // saves the coordinates of the closest bookbox
+            var closeLong: Double = 0.0
+            var closeLat: Double = 0.0
+            // comparing the user favourites with the book boxes
+            for (name in favourites) {
+                databaseReference = FirebaseDatabase.getInstance().getReference("bookBoxes")
+                // databaseReference.key
+                databaseReference.child("name").child(name).get().addOnSuccessListener {
+                    if (it.exists()) {
+                        // get the latitude and longitude of the bookbox then calculate the distance, the one with the smallest distance gets displayed
+                        var lat: Double = databaseReference.child("latitude").get().toString().toDouble()
+                        var long: Double = databaseReference.child("latitude").get().toString().toDouble()
+                        var distance: Double = getDistance(lat, long)
+                        // if its the first or only fav then its set to be the closes box
+                        if (minDistance == 0.0) {
+                            closest = name
+                            minDistance = distance
+                            closeLong = long
+                            closeLat = lat
+                        }
+                        // if the new book box had a closer distance then its now saved as such
+                        if (distance < minDistance) {
+                            closeLong = long
+                            closeLat = lat
+                            minDistance = distance
+                            closest = name
+                        }
+                    }
+                }
+            }
+            var outputTxt: String = "Nearby BookBox at: latitude: " + closeLat.toString() + " longitude: " + closeLong.toString()
+            view.findViewById<TextView>(R.id.favLocation).setText(outputTxt)
+        }
+
         // Set up button to add a new book box
         view.findViewById<Button>(R.id.add_bookbox_button).setOnClickListener {
             // Start AddingBookBoxActivity to add a new book box
@@ -462,4 +541,36 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             commit() // Commit the transaction
         }
     }
+
+    @SuppressLint("MissingPermission")
+    private fun getCurrentLocation() {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                // Got last known location. In some rare situations, this can be null.
+                location?.let {
+                    latitude = it.latitude
+                    longitude = it.longitude
+                }
+            }
+    }
+
+    // has to be altered to account for negative long/lat values, calculates the distance between two points
+    // add if statements to convert negatives to positives and get the difference in value
+    private fun getDistance(lat: Double, long: Double): Double {
+        var distance: Double
+        if (lat < latitude) {
+            distance = latitude - lat
+        }
+        else {
+            distance = lat - latitude
+        }
+        if (long < longitude) {
+            distance += longitude - long
+        }
+        else {
+            distance += long - longitude
+        }
+        return distance
+    }
+
 }

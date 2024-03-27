@@ -24,6 +24,7 @@ class SearchFragment : Fragment() {
 
         databaseReference = FirebaseDatabase.getInstance().reference.child("Books")
 
+
         val searchQueryEditText: EditText = view.findViewById(R.id.searchQueryEditText)
         val searchByNameCheckbox: CheckBox = view.findViewById(R.id.searchByNameCheckbox)
         val searchByAuthorCheckbox: CheckBox = view.findViewById(R.id.searchByAuthorCheckbox)
