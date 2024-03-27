@@ -39,14 +39,13 @@
     <string name="dark_mode">Dark Mode</string>
     <string name="type_your_username">Type your username</string>
     <string name="map_button_text">Map</string>
-    <string name="contact_support">contact_support</string>
+    <string name="contact_support">Contact Support</string>
 
     <!-- Technical support -->
     <string name="name_hint2">Name</string>
     <string name="email_hint">Email</string>
     <string name="message_hint">Your message</string>
     <string name="submit">Submit</string>
-
 
 
     <!-- EditText hints -->
@@ -58,7 +57,11 @@
     <string name="confirm_addition">Confirm Addition</string>
     <string name="book_box_image_description">Image of the book box</string>
     <string name="image_description">Description of the image</string>
+    <string name="about_us_text">The Book Box is an application that helps book readers in finding books in an easy and cheap way.\n The application was done by the help of 9 Undergrad Students at the University of Dalhousie.</string>
+    <string name="about_us">About Us</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>
