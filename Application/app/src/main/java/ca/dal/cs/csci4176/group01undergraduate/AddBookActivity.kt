@@ -3,9 +3,15 @@ package ca.dal.cs.csci4176.group01undergraduate
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.PixelFormat
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.os.Handler
+import android.view.Gravity
 import android.view.View
+import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -50,10 +56,12 @@ class AddBookActivity : AppCompatActivity() {
                 viewModel.addBookToFirebase(book, bookBoxKey) { isSuccess, error ->
                     showLoading(false)
                     if (isSuccess) {
-                        Toast.makeText(this@AddBookActivity, "Book added successfully", Toast.LENGTH_SHORT).show()
+                        displayMessage("Book added successfully")
+//                        Toast.makeText(this@AddBookActivity, "Book added successfully", Toast.LENGTH_SHORT).show()
                         restartActivity()
                     } else {
-                        Toast.makeText(this@AddBookActivity, "Failed to add book: $error", Toast.LENGTH_SHORT).show()
+                        displayMessage("Failed to add book: $error")
+//                        Toast.makeText(this@AddBookActivity, "Failed to add book: $error", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -146,5 +154,28 @@ class AddBookActivity : AppCompatActivity() {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
+
+    private fun displayMessage(message: String) {
+        val messageView = layoutInflater.inflate(R.layout.display_message, null) as TextView
+        messageView.text = message
+
+        val params = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            PixelFormat.TRANSLUCENT
+        )
+        params.gravity = Gravity.CENTER
+
+        val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+        windowManager.addView(messageView, params)
+
+        Handler().postDelayed({
+            windowManager.removeView(messageView)
+        }, 2000)
+    }
+
+
 
 }
