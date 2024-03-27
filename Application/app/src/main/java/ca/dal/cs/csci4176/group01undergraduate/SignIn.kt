@@ -48,6 +48,7 @@ class SignIn : AppCompatActivity() {
                         val staySign = bind.staySignedInButton.isChecked
                         getSharedPreferences("prefs", Context.MODE_PRIVATE)
                             .edit().putBoolean("staySign", staySign).apply()
+                        Toast.makeText(this, "SignIn Successful", Toast.LENGTH_SHORT).show()
 
                         //navigating to main activity if it is successful
                         val intent = Intent(this, MainActivity::class.java)

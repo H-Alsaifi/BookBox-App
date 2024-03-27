@@ -2,9 +2,15 @@ package ca.dal.cs.csci4176.group01undergraduate.displayingbookbox
 
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.models.BookBoxLocation
 
+/**
+ * Data class representing a book box.
+ *
+ * @property location The geographic location of the book box.
+ * @property description A text description of the book box. It could include details such as content or instructions for use.
+ * @property imageUrl A URL pointing to an image of the book box. This could be used for displaying in the UI.
+ * @property bookIDs A mutable list of identifiers for books contained in the book box. These IDs can be used to fetch additional details about each book.
+ */
 data class BookBox(
-    val name: String? = null,
-    // Replace the String type with the BookBoxLocation class for the location
     val location: BookBoxLocation? = null,
     val description: String? = null,
     val imageUrl: String? = null,

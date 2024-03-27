@@ -18,4 +18,5 @@
         android:textAppearance="?android:textAppearanceSmall"
         android:text="by Author" />
 
+
 </LinearLayout>

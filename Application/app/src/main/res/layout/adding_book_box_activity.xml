@@ -6,52 +6,42 @@
     android:layout_height="match_parent"
     tools:context=".addingbookbox.AddingBookBoxActivity">
 
-    <!-- Name input -->
-    <EditText
-        android:id="@+id/nameEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/name_hint"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5" />
-
-    <!-- Location input -->
+    <!-- Location Button -->
     <Button
         android:id="@+id/getLocationButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Get Location"
-        app:layout_constraintTop_toBottomOf="@id/nameEditText"
+        android:text="GET LOCATION"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp" />
 
-    <!-- Location display -->
+    <!-- Location Display -->
     <TextView
         android:id="@+id/locationDisplay"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text=""
-        app:layout_constraintTop_toTopOf="@id/getLocationButton"
-        app:layout_constraintBottom_toBottomOf="@id/getLocationButton"
-        app:layout_constraintStart_toEndOf="@id/getLocationButton"
+        app:layout_constraintTop_toBottomOf="@id/getLocationButton"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="8dp"/>
+        android:layout_marginTop="16dp"/>
 
-    <!-- Description input -->
+    <!-- Description Input -->
     <EditText
         android:id="@+id/descriptionEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/description_hint"
-        app:layout_constraintTop_toBottomOf="@id/getLocationButton"
+        android:inputType="textMultiLine"
+        app:layout_constraintTop_toBottomOf="@id/locationDisplay"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginTop="16dp" />
 
-    <!-- Upload picture FAB -->
+    <!-- Upload Picture FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_upload"
         android:layout_width="wrap_content"
@@ -62,32 +52,32 @@
         app:tint="@android:color/white"
         app:backgroundTint="@color/primaryColor"
         app:layout_constraintTop_toBottomOf="@id/descriptionEditText"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"/>
 
-    <!-- Map button -->
+    <!-- Map Button -->
     <Button
         android:id="@+id/mapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/map_button_text"
+        android:text="GO BACK TO MAP"
         app:layout_constraintTop_toBottomOf="@id/fab_upload"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginTop="16dp"/>
 
-    <!-- Confirm addition button -->
+    <!-- Confirm Button -->
     <Button
         android:id="@+id/confirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/confirm_addition"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mapButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        android:layout_marginBottom="32dp"/>
+        android:layout_marginTop="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
