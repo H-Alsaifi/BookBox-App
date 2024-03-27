@@ -307,7 +307,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                     MarkerOptions()
                         .position(LatLng(bookBox.location.latitude, bookBox.location.longitude))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_book_box)) // Ensure you have this drawable resource
-                        .title(bookBox.name) // Optional: Sets the title of the marker to the book box's name
                 )
                 // Associate this marker with the book box's ID
                 marker?.let {
@@ -390,19 +389,21 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                 betterBookBox.clear() // Clear the existing entries to avoid duplicates
                 for (bookBoxSnapshot in snapshot.children) {
                     val bookBoxId = bookBoxSnapshot.key // Unique key for each book box
-                    val name = bookBoxSnapshot.child("name").getValue(String::class.java)
                     val lat = bookBoxSnapshot.child("latitude").getValue(Double::class.java)
                     val lng = bookBoxSnapshot.child("longitude").getValue(Double::class.java)
                     val description = bookBoxSnapshot.child("description").getValue(String::class.java)
                     val imageURL = bookBoxSnapshot.child("imageUrl").getValue(String::class.java)
+                    val bookIDs = bookBoxSnapshot.child("bookIDs").children.mapNotNull { it.key }.toMutableList()
 
                     if (lat != null && lng != null && bookBoxId != null) {
-                        val bookBox = BookBox(name, BookBoxLocation(lat, lng), description, imageURL, mutableListOf())
+                        val location = BookBoxLocation(lat, lng)
+                        val bookBox = BookBox(location, description, imageURL, bookIDs)
                         betterBookBox[bookBoxId] = bookBox // Use the unique key for each book box
                     }
                 }
-                tryAddingMarkers() // Attempt to add markers if map is ready // Now add markers for all book boxes
+                tryAddingMarkers() // Attempt to add markers if map is ready
             }
+
 
 
             override fun onCancelled(error: DatabaseError) {
