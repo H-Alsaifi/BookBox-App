@@ -9,14 +9,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:textAppearanceMedium"
-        android:text="Book Title" />
+        android:text="N/A" />
 
     <TextView
         android:id="@+id/bookAuthorTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:textAppearanceSmall"
-        android:text="by Author" />
+        android:text="N/A" />
+
+    <TextView
+        android:id="@+id/bookBoxAddressTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:text="N/A" />
 
 
 </LinearLayout>

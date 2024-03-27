@@ -3,14 +3,15 @@ package ca.dal.cs.csci4176.group01undergraduate
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ca.dal.cs.csci4176.group01undergraduate.addBookISBN.Book
 
+
 class BooksAdapter(private val booksList: List<Book>) : RecyclerView.Adapter<BooksAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val addressTextView: TextView = view.findViewById(R.id.bookBoxAddressTextView)
         val titleTextView: TextView = view.findViewById(R.id.bookTitleTextView)
         val authorTextView: TextView = view.findViewById(R.id.bookAuthorTextView)
     }
@@ -22,9 +23,11 @@ class BooksAdapter(private val booksList: List<Book>) : RecyclerView.Adapter<Boo
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val book = booksList[position]
-        holder.titleTextView.text = book.title
-        holder.authorTextView.text = "by ${book.author}"
+        holder.titleTextView.text = "Title: ${book.title}"
+        holder.authorTextView.text = "Author: ${book.author}"
+        holder.addressTextView.text = "Location: ${book.address}"
     }
 
     override fun getItemCount() = booksList.size
+
 }

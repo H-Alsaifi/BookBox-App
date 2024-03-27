@@ -53,7 +53,7 @@ class AddBookActivity : AppCompatActivity() {
                 showLoading(true)
                 val bookBoxKey = intent.getStringExtra("BOOK_BOX_KEY")
                 Log.d("AddBookActivity", "Received book box ID: $bookBoxKey")
-                viewModel.addBookToFirebase(book, bookBoxKey) { isSuccess, error ->
+                viewModel.addBookToFirebase(this, book, bookBoxKey) { isSuccess, error ->
                     showLoading(false)
                     if (isSuccess) {
                         displayMessage("Book added successfully")
@@ -107,22 +107,25 @@ class AddBookActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        viewModel.state.observe(this, { state ->
+        viewModel.state.observe(this) { state ->
             when (state) {
                 is BookState.Loading -> binding.txtBookDetails.text = "Loading..."
                 is BookState.Success -> {
                     val book = state.book
                     lastFetchedBook = book // Save the fetched book
-                    binding.txtBookDetails.text = "Title: ${book.title}\nAuthor: ${book.author}\nISBN: ${book.isbn}\nDescription: ${book.description}\nRating: ${book.rating}"
+                    binding.txtBookDetails.text =
+                        "Title: ${book.title}\nAuthor: ${book.author}\nISBN: ${book.isbn}\nDescription: ${book.description}\nRating: ${book.rating}"
                     binding.btnAddBook.visibility = View.VISIBLE // Show the "Add Book" button
                 }
+
                 is BookState.Error -> {
                     binding.txtBookDetails.text = "Error: ${state.error}"
                     binding.btnAddBook.visibility = View.GONE // Hide the "Add Book" button
                 }
+
                 else -> {}
             }
-        })
+        }
     }
 
     private fun setupSearchButton() {
