@@ -66,6 +66,6 @@
     <string name="book_details_title">Title: %s</string>
     <string name="book_details_author">Author: %s</string>
     <string name="book_details_description">Description:\n%s</string>
-    <string name="book_details_rating">Rating: %d/5</string>
+    <string name="book_details_rating">Rating: %.1f/5</string>
 
 </resources>

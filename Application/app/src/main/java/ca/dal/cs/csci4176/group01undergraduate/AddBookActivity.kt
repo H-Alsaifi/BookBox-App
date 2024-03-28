@@ -161,10 +161,10 @@ class AddBookActivity : AppCompatActivity() {
                 val title = dialogView.findViewById<EditText>(R.id.manualTitle).text.toString()
                 val author = dialogView.findViewById<EditText>(R.id.manualAuthor).text.toString()
                 val description = dialogView.findViewById<EditText>(R.id.manualDescription).text.toString()
-                val rating = dialogView.findViewById<EditText>(R.id.manualRating).text.toString().toIntOrNull() ?: 0
+                val rating = dialogView.findViewById<EditText>(R.id.manualRating).text.toString().toDoubleOrNull() ?: 0.0
 
                 // Prepare a Book object
-                val book = Book(title, author, "0", description, rating, "", "")
+                val book = Book(title, author, "0", description, rating, 0, "", "")
                 lastFetchedBook = book // Set the lastFetchedBook to the manually entered book
 
                 // Attempt to add the book to Firebase

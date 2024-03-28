@@ -24,9 +24,10 @@ data class Book(
     val author: String,
     val isbn: String,
     val description: String,
-    val rating: Int,
+    var rating: Double,
+    var totalRatings: Int,
     var bookBoxID: String,
     var address: String
 ) : Parcelable {
-    constructor() : this("", "", "", "", 0, "", "")
+    constructor() : this("", "", "", "", 0.0, 0, "", "")
 }
