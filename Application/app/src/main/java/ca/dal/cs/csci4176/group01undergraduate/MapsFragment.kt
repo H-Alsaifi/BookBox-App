@@ -2,6 +2,7 @@ package ca.dal.cs.csci4176.group01undergraduate
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.Intent
@@ -26,6 +27,8 @@ import android.widget.TextView
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.AddingBookBoxActivity
 import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BoxFragment
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -37,6 +40,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
+import com.google.android.gms.maps.GoogleMapOptions
 
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -96,26 +100,46 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
     private var markerBookBoxIdMap = HashMap<Marker, String>()
 
+    // location permission
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                // Permission is granted, proceed with location-related tasks
+                getCurrentLocation()
+            } else {
+                parentFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, MapErrorFragment())
+                    .commit()
+            }
+        }
+
     /**
      * Acts as a callback
      */
-    @SuppressLint("MissingPermission")
     private val callback = OnMapReadyCallback{
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestLocationPermission()
+        } else {
+            getCurrentLocation()
+        }
 
         map = it
         isMapInitialized = true
-//        addMarkers()
         tryAddingMarkers()
 
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
-            map.isMyLocationEnabled = true
-            getLastKnownLocation()
-        }
         map.setOnMarkerClickListener(this)
 
         map.uiSettings.isZoomControlsEnabled = true
+    }
+
+    private fun requestLocationPermission() {
+        requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     private fun tryAddingMarkers() {
@@ -124,15 +148,18 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         }
     }
 
-
     @SuppressLint("MissingPermission")
-    private fun getLastKnownLocation() {
+    private fun getCurrentLocation() {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
                 // Got last known location. In some rare situations, this can be null.
                 location?.let {
+                    latitude = it.latitude
+                    longitude = it.longitude
                     val currentLatLng = LatLng(it.latitude, it.longitude)
+                    map.isMyLocationEnabled = true
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+
                 }
             }
     }
@@ -190,76 +217,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         }
     }
 
-
-
-//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//    override fun onMarkerClick(marker: Marker):Boolean {
-//
-//        if(activity is MainActivity){
-//            val mainActivity = activity as MainActivity
-//
-//            // find the bottomSheet
-//            val linearLayout = mainActivity
-//                .findViewById<LinearLayout>(R.id.bottomSheetLayout)
-//
-//
-////            betterBookBox.values.forEach {
-////                if (it.location != null) linearLayout.findViewById<TextView>(R.id.bookBoxLocation)
-////                    .text = getAddressFromLatLng(it.location.latitude, it.location.longitude)
-////
-////                Picasso
-////                    .get()
-////                    .load(it.imageUrl)
-////                    .into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
-////
-////                // TODO(Add book for book box)
-////                linearLayout.findViewById<Button>(R.id.bookBoxAddBook)
-////                    .setOnClickListener{
-////
-////
-////                    }
-////
-////                // find the button
-////                linearLayout.findViewById<Button>(R.id.getDirections)
-////                    .setOnClickListener{
-////                        getDirections(marker.position)
-////                    }
-////            }
-//
-//            // Assuming 'betterBookBox' is a Map with keys as book box IDs
-//            betterBookBox.forEach { (key, value) ->
-//                if (value.location != null) linearLayout.findViewById<TextView>(R.id.bookBoxLocation)
-//                    .text = getAddressFromLatLng(value.location.latitude, value.location.longitude)
-//
-//                Picasso
-//                    .get()
-//                    .load(value.imageUrl)
-//                    .into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
-//
-//                // Add book for book box button click listener
-//                linearLayout.findViewById<Button>(R.id.bookBoxAddBook).setOnClickListener{
-//                    // Here 'key' is the book box ID (selectedBookBoxKey)
-//
-//                    // Create an Intent to start AddBookActivity with the book box ID
-//                    val intent = Intent(context, AddBookActivity::class.java).apply {
-//                        putExtra("BOOK_BOX_KEY", key)
-//                        Log.d("MapsFragment", "Passing book box ID: $key")
-//                    }
-//                    startActivity(intent)
-//                }
-//
-//                // Get directions button click listener
-//                linearLayout.findViewById<Button>(R.id.getDirections).setOnClickListener{
-//                    getDirections(marker.position)
-//                }
-//            }
-//
-//
-//            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-//        }
-//
-//        return true
-//    }
 
 
     /**
@@ -390,31 +347,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
         dbReference.addValueEventListener(object : ValueEventListener{
             @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                for (bookBoxSnapshot in snapshot.children){
-//                    val name = bookBoxSnapshot.child("name")
-//                        .getValue(String::class.java)
-//
-//                    val lat = bookBoxSnapshot.child("latitude")
-//                        .getValue(Double::class.java)
-//                    val lng = bookBoxSnapshot.child("longitude")
-//                        .getValue(Double::class.java)
-//
-//                    val description = bookBoxSnapshot.child("description")
-//                        .getValue(String::class.java)
-//
-//                    val imageURL = bookBoxSnapshot.child("imageUrl")
-//                        .getValue(String::class.java)
-//
-//                    if(lat !=null && lng !=null){
-//                        val bookBox = BookBox(name, BookBoxLocation(lat,lng),description,imageURL, mutableListOf())
-//
-//                        // add bookBox to hashmap
-//                        snapshot.key?.let { betterBookBox.put(it, bookBox) }
-//
-//                    }
-//                }
-//            }
             override fun onDataChange(snapshot: DataSnapshot) {
                 betterBookBox.clear() // Clear the existing entries to avoid duplicates
                 for (bookBoxSnapshot in snapshot.children) {
@@ -435,13 +367,10 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             }
 
 
-
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(requireContext(), "Failed to fetch data", Toast.LENGTH_SHORT).show()
             }
-
         })
-
 
     }
 
@@ -464,6 +393,18 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        // Location permission
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 99)
+        }
+
         // bottom sheet
         bottomSheetLayout = view.findViewById(R.id.bottomSheetLayout)
         bottomSheetBehavior = BottomSheetBehavior
@@ -472,7 +413,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         view.findViewById<Button>(R.id.view_list_button).setOnClickListener {
             // Navigate to BoxFragment to view the list
@@ -562,17 +502,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun getCurrentLocation() {
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                // Got last known location. In some rare situations, this can be null.
-                location?.let {
-                    latitude = it.latitude
-                    longitude = it.longitude
-                }
-            }
-    }
 
     // has to be altered to account for negative long/lat values, calculates the distance between two points
     // add if statements to convert negatives to positives and get the difference in value
