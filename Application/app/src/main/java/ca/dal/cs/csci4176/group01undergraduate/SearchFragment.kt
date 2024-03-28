@@ -31,7 +31,15 @@ class SearchFragment : Fragment() {
         val searchButton: Button = view.findViewById(R.id.searchButton)
         val booksRecyclerView: RecyclerView = view.findViewById(R.id.booksRecyclerView)
         booksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        booksAdapter = BooksAdapter(booksList)
+        booksAdapter = BooksAdapter(booksList) { selectedBook ->
+            // Navigate to BookDetailsFragment with selectedBook details
+            val fragment = BookDetailsFragment.newInstance(selectedBook)
+            parentFragmentManager.beginTransaction().apply {
+                replace(R.id.fragment_container, fragment)
+                addToBackStack(null)
+                commit()
+            }
+        }
         booksRecyclerView.adapter = booksAdapter
 
         searchButton.setOnClickListener {

@@ -7,6 +7,7 @@ plugins {
     id("kotlin-android")
     //new added
     id("com.google.gms.google-services")
+    id("kotlin-parcelize")
 
 }
 
@@ -70,7 +71,6 @@ secrets {
     ignoreList.add("keyToIgnore")
     ignoreList.add("sdk.*")
 }
-
 
 
 dependencies {
