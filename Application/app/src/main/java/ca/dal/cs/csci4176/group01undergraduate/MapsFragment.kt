@@ -71,6 +71,8 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
     // map
     private lateinit var map: GoogleMap
+    private var isMapInitialized = false
+
 
     // Halifax location
     private val northEast: LatLng = LatLng(44.684204, -63.543474)
@@ -80,6 +82,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     private lateinit var bottomSheetBehavior : BottomSheetBehavior<LinearLayout>
     private lateinit var bottomSheetLayout: LinearLayout
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
 
     // polyline for directions
     private var currentPolyline: Polyline? = null
@@ -91,6 +94,8 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     // bookbox
     private lateinit var betterBookBox: HashMap<String, BookBox>
 
+    private var markerBookBoxIdMap = HashMap<Marker, String>()
+
     /**
      * Acts as a callback
      */
@@ -98,6 +103,9 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     private val callback = OnMapReadyCallback{
 
         map = it
+        isMapInitialized = true
+//        addMarkers()
+        tryAddingMarkers()
 
 
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -109,6 +117,13 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
         map.uiSettings.isZoomControlsEnabled = true
     }
+
+    private fun tryAddingMarkers() {
+        if (isMapInitialized && betterBookBox.isNotEmpty()) {
+            addMarkers()
+        }
+    }
+
 
     @SuppressLint("MissingPermission")
     private fun getLastKnownLocation() {
@@ -123,44 +138,109 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    override fun onMarkerClick(marker: Marker):Boolean {
+    override fun onMarkerClick(marker: Marker): Boolean {
+        val mainActivity = activity as? MainActivity ?: return true
 
-        if(activity is MainActivity){
-            val mainActivity = activity as MainActivity
+        // Retrieve the book box ID associated with the clicked marker
+        val bookBoxId = markerBookBoxIdMap[marker]
+        val bookBox = bookBoxId?.let { betterBookBox[it] }
 
-            // find the bottomSheet
-            val linearLayout = mainActivity
-                .findViewById<LinearLayout>(R.id.bottomSheetLayout)
+        bookBox?.let { box ->
+            // Find the bottomSheet
+            val linearLayout = mainActivity.findViewById<LinearLayout>(R.id.bottomSheetLayout)
+            linearLayout.findViewById<TextView>(R.id.bookBoxLocation).text =
+                box.location?.let { getAddressFromLatLng(it.latitude, box.location.longitude) }
+            Picasso.get().load(box.imageUrl).into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
 
-
-            betterBookBox.values.forEach {
-                if (it.location != null) linearLayout.findViewById<TextView>(R.id.bookBoxLocation)
-                    .text = getAddressFromLatLng(it.location.latitude, it.location.longitude)
-
-                Picasso
-                    .get()
-                    .load(it.imageUrl)
-                    .into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
-
-                // TODO(Add book for book box)
-                linearLayout.findViewById<Button>(R.id.bookBoxAddBook)
-                    .setOnClickListener{
-
-                    }
-
-                // find the button
-                linearLayout.findViewById<Button>(R.id.getDirections)
-                    .setOnClickListener{
-                        getDirections(marker.position)
-                    }
+            // Set up the "Add book for book box" button click listener
+            linearLayout.findViewById<Button>(R.id.bookBoxAddBook).setOnClickListener {
+                val intent = Intent(context, AddBookActivity::class.java).apply {
+                    putExtra("BOOK_BOX_KEY", bookBoxId)
+                }
+                startActivity(intent)
             }
 
+            // Set up the "Get directions" button click listener
+            linearLayout.findViewById<Button>(R.id.getDirections).setOnClickListener {
+                box.location?.let { it1 -> LatLng(it1.latitude, box.location.longitude) }
+                    ?.let { it2 -> getDirections(it2) }
+            }
 
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
         return true
     }
+
+
+//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+//    override fun onMarkerClick(marker: Marker):Boolean {
+//
+//        if(activity is MainActivity){
+//            val mainActivity = activity as MainActivity
+//
+//            // find the bottomSheet
+//            val linearLayout = mainActivity
+//                .findViewById<LinearLayout>(R.id.bottomSheetLayout)
+//
+//
+////            betterBookBox.values.forEach {
+////                if (it.location != null) linearLayout.findViewById<TextView>(R.id.bookBoxLocation)
+////                    .text = getAddressFromLatLng(it.location.latitude, it.location.longitude)
+////
+////                Picasso
+////                    .get()
+////                    .load(it.imageUrl)
+////                    .into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
+////
+////                // TODO(Add book for book box)
+////                linearLayout.findViewById<Button>(R.id.bookBoxAddBook)
+////                    .setOnClickListener{
+////
+////
+////                    }
+////
+////                // find the button
+////                linearLayout.findViewById<Button>(R.id.getDirections)
+////                    .setOnClickListener{
+////                        getDirections(marker.position)
+////                    }
+////            }
+//
+//            // Assuming 'betterBookBox' is a Map with keys as book box IDs
+//            betterBookBox.forEach { (key, value) ->
+//                if (value.location != null) linearLayout.findViewById<TextView>(R.id.bookBoxLocation)
+//                    .text = getAddressFromLatLng(value.location.latitude, value.location.longitude)
+//
+//                Picasso
+//                    .get()
+//                    .load(value.imageUrl)
+//                    .into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
+//
+//                // Add book for book box button click listener
+//                linearLayout.findViewById<Button>(R.id.bookBoxAddBook).setOnClickListener{
+//                    // Here 'key' is the book box ID (selectedBookBoxKey)
+//
+//                    // Create an Intent to start AddBookActivity with the book box ID
+//                    val intent = Intent(context, AddBookActivity::class.java).apply {
+//                        putExtra("BOOK_BOX_KEY", key)
+//                        Log.d("MapsFragment", "Passing book box ID: $key")
+//                    }
+//                    startActivity(intent)
+//                }
+//
+//                // Get directions button click listener
+//                linearLayout.findViewById<Button>(R.id.getDirections).setOnClickListener{
+//                    getDirections(marker.position)
+//                }
+//            }
+//
+//
+//            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+//        }
+//
+//        return true
+//    }
 
 
     /**
@@ -225,17 +305,28 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
      * Add pins to map
      * icon taken from: https://www.figma.com/file/62O8YMjZOLkkTe9jqkmp61/coolicons-%7C-Free-Iconset-(Community)?type=design&t=Umarm5N5x9E9bXGJ-6
      */
-    private fun addMarkers(){
-        betterBookBox.values.forEach { bookBox->
-            if(bookBox.location != null){
-                map.addMarker(
+    private fun addMarkers() {
+
+        // Optional: Clear existing markers if needed
+        map.clear()
+        markerBookBoxIdMap.clear()
+
+        // Iterate over each book box and add a marker for it
+        betterBookBox.forEach { (bookBoxId, bookBox) ->
+            if (bookBox.location != null) {
+                val marker = map.addMarker(
                     MarkerOptions()
                         .position(LatLng(bookBox.location.latitude, bookBox.location.longitude))
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_book_box))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_book_box)) // Ensure you have this drawable resource
                 )
+                // Associate this marker with the book box's ID
+                marker?.let {
+                    markerBookBoxIdMap[it] = bookBoxId
+                }
             }
         }
     }
+
 
     /**
      * gets address from lat lng
@@ -280,32 +371,51 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
         dbReference.addValueEventListener(object : ValueEventListener{
             @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                for (bookBoxSnapshot in snapshot.children){
+//                    val name = bookBoxSnapshot.child("name")
+//                        .getValue(String::class.java)
+//
+//                    val lat = bookBoxSnapshot.child("latitude")
+//                        .getValue(Double::class.java)
+//                    val lng = bookBoxSnapshot.child("longitude")
+//                        .getValue(Double::class.java)
+//
+//                    val description = bookBoxSnapshot.child("description")
+//                        .getValue(String::class.java)
+//
+//                    val imageURL = bookBoxSnapshot.child("imageUrl")
+//                        .getValue(String::class.java)
+//
+//                    if(lat !=null && lng !=null){
+//                        val bookBox = BookBox(name, BookBoxLocation(lat,lng),description,imageURL, mutableListOf())
+//
+//                        // add bookBox to hashmap
+//                        snapshot.key?.let { betterBookBox.put(it, bookBox) }
+//
+//                    }
+//                }
+//            }
             override fun onDataChange(snapshot: DataSnapshot) {
-                for (bookBoxSnapshot in snapshot.children){
-                    val name = bookBoxSnapshot.child("name")
-                        .getValue(String::class.java)
+                betterBookBox.clear() // Clear the existing entries to avoid duplicates
+                for (bookBoxSnapshot in snapshot.children) {
+                    val bookBoxId = bookBoxSnapshot.key // Unique key for each book box
+                    val lat = bookBoxSnapshot.child("latitude").getValue(Double::class.java)
+                    val lng = bookBoxSnapshot.child("longitude").getValue(Double::class.java)
+                    val description = bookBoxSnapshot.child("description").getValue(String::class.java)
+                    val imageURL = bookBoxSnapshot.child("imageUrl").getValue(String::class.java)
+                    val bookIDs = bookBoxSnapshot.child("bookIDs").children.mapNotNull { it.key }.toMutableList()
 
-                    val lat = bookBoxSnapshot.child("latitude")
-                        .getValue(Double::class.java)
-                    val lng = bookBoxSnapshot.child("longitude")
-                        .getValue(Double::class.java)
-
-                    val description = bookBoxSnapshot.child("description")
-                        .getValue(String::class.java)
-
-                    val imageURL = bookBoxSnapshot.child("imageUrl")
-                        .getValue(String::class.java)
-
-                    if(lat !=null && lng !=null){
-                        val bookBox = BookBox(name, BookBoxLocation(lat,lng),description,imageURL)
-
-                        // add bookBox to hashmap
-                        snapshot.key?.let { betterBookBox.put(it, bookBox) }
-
-                        addMarkers()
+                    if (lat != null && lng != null && bookBoxId != null) {
+                        val location = BookBoxLocation(lat, lng)
+                        val bookBox = BookBox(location, description, imageURL, bookIDs)
+                        betterBookBox[bookBoxId] = bookBox // Use the unique key for each book box
                     }
                 }
+                tryAddingMarkers() // Attempt to add markers if map is ready
             }
+
+
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(requireContext(), "Failed to fetch data", Toast.LENGTH_SHORT).show()
@@ -342,16 +452,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync{
-            it.setOnMapLoadedCallback{
-                val halifaxBounds = LatLngBounds
-                    .builder()
-                    .include(northEast)
-                    .include(southWest)
-                    .build()
-                it.moveCamera(CameraUpdateFactory.newLatLngBounds(halifaxBounds, 10))
-            }
-        }
         mapFragment?.getMapAsync(callback)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
@@ -434,12 +534,12 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             startActivity(Intent(context, AddingBookBoxActivity::class.java))
         }
     }
-        private fun navigateToBoxFragment() {
-            parentFragmentManager.beginTransaction().apply {
-                replace(R.id.fragment_container, BoxFragment()) // Use the ID of your container where fragments are placed
-                addToBackStack(null) // Add this transaction to the back stack
-                commit() // Commit the transaction
-            }
+    private fun navigateToBoxFragment() {
+        parentFragmentManager.beginTransaction().apply {
+            replace(R.id.fragment_container, BoxFragment()) // Use the ID of your container where fragments are placed
+            addToBackStack(null) // Add this transaction to the back stack
+            commit() // Commit the transaction
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -455,6 +555,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     }
 
     // has to be altered to account for negative long/lat values, calculates the distance between two points
+    // add if statements to convert negatives to positives and get the difference in value
     private fun getDistance(lat: Double, long: Double): Double {
         var distance: Double
         if (lat < latitude) {
