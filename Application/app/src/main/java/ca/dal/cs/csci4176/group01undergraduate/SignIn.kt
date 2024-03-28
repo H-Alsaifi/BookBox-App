@@ -11,13 +11,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 
-
 class SignIn : AppCompatActivity() {
 
     //initializing variables for firebase and binding
     private lateinit var auth: FirebaseAuth
     private lateinit var bind: ActivitySignInBinding
-
 
     //onCreate starts when activity starts
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +48,8 @@ class SignIn : AppCompatActivity() {
                         val staySign = bind.staySignedInButton.isChecked
                         getSharedPreferences("prefs", Context.MODE_PRIVATE)
                             .edit().putBoolean("staySign", staySign).apply()
+                        Toast.makeText(this, "SignIn Successful", Toast.LENGTH_SHORT).show()
+
                         // saving the user email in shared preferences for accessing their saved favourites later
                         val sharedPref = getSharedPreferences("MyData", MODE_PRIVATE)
                         val editor = sharedPref.edit()
