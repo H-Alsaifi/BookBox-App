@@ -4,10 +4,12 @@ package ca.dal.cs.csci4176.group01undergraduate
 import android.graphics.PixelFormat
 import android.os.Handler
 import android.os.Bundle
+import android.os.Looper
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import ca.dal.cs.csci4176.group01undergraduate.databinding.ActivityResetPasswordBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -68,24 +70,15 @@ class ResetPasswordActivity : AppCompatActivity() {
     }
 
     private fun displayMessage(message: String) {
-        val messageView = layoutInflater.inflate(R.layout.display_message, null) as TextView
-        messageView.text = message
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(message)
+        builder.setTitle("Update !")
+        builder.setCancelable(false)
+        val alertDialog = builder.create()
+        alertDialog.show()
+        Handler(Looper.getMainLooper()).postDelayed({
+            alertDialog.dismiss()
+        }, 5000)
 
-        val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-            PixelFormat.TRANSLUCENT
-        )
-        params.gravity = Gravity.CENTER
-
-        val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-        windowManager.addView(messageView, params)
-
-        Handler().postDelayed({
-            windowManager.removeView(messageView)
-        }, 2000)
     }
-
 }

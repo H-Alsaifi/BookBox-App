@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -15,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import ca.dal.cs.csci4176.group01undergraduate.addBookISBN.Book
@@ -156,24 +158,16 @@ class AddBookActivity : AppCompatActivity() {
     }
 
     private fun displayMessage(message: String) {
-        val messageView = layoutInflater.inflate(R.layout.display_message, null) as TextView
-        messageView.text = message
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(message)
+        builder.setTitle("Update !")
+        builder.setCancelable(false)
+        val alertDialog = builder.create()
+        alertDialog.show()
+        Handler(Looper.getMainLooper()).postDelayed({
+            alertDialog.dismiss()
+        }, 5000)
 
-        val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-            PixelFormat.TRANSLUCENT
-        )
-        params.gravity = Gravity.CENTER
-
-        val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-        windowManager.addView(messageView, params)
-
-        Handler().postDelayed({
-            windowManager.removeView(messageView)
-        }, 2000)
     }
 
 
