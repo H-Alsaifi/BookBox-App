@@ -13,7 +13,7 @@ data class VolumeInfo(
     val authors: List<String>?,
     val description: String?,
     val industryIdentifiers: List<IndustryIdentifier>?,
-    // Add other fields as needed
+    val averageRating: Double? = null
 )
 
 data class IndustryIdentifier(

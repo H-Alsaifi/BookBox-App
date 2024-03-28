@@ -15,15 +15,19 @@ import androidx.lifecycle.ViewModelProvider
 import ca.dal.cs.csci4176.group01undergraduate.databinding.FragmentProfileBinding
 import com.google.firebase.auth.FirebaseAuth
 
+//fragment for user profile management, including editing profile information and handling account actions
 class ProfileFragment : Fragment() {
+    //ViewModel to manage the logic behind the UI
     private lateinit var viewModel: ProfileViewModel
+    // Binding object to interact with the layout's views in a type-safe manner
     private var _binding: FragmentProfileBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding!!//Getter for the non-null version of the binding object for easier access
 
-
+    // ActivityResultLauncher for picking an image from the device, with a callback for the selected image URI
     private val imagePickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
+        // If a URI is returned, update the profile picture in the ViewModel
         uri?.let { viewModel.updateProfilePicture(it) }
     }
 
@@ -34,13 +38,15 @@ class ProfileFragment : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    // Set click listeners for each button, triggering dialogs and actions for profile management
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity())[ProfileViewModel::class.java]
         setupObservers()
+        viewModel.loadUserProfile()//load user data every time
 
+        //set click listeners for each button, triggering dialogs and actions for profile management
         binding.btnEditUsername.setOnClickListener {
             showEditUsernameDialog()
         }
@@ -61,14 +67,18 @@ class ProfileFragment : Fragment() {
             // Launch the image picker
             imagePickerLauncher.launch("image/*")
         }
+        binding.rateBtn.setOnClickListener {
+            val intent: Intent = Intent(context, RateBook::class.java)
+            startActivity(intent)
+        }
     }
-
+    // Observes changes in the ViewModel's state and updates the UI accordingly
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             handleState(state)
         }
     }
-
+    //displays a dialog for editing the user's username.
     private fun showEditUsernameDialog() {
         val input = EditText(requireContext())
         input.inputType = InputType.TYPE_CLASS_TEXT
@@ -78,6 +88,7 @@ class ProfileFragment : Fragment() {
             setView(input)
             setPositiveButton("Save") { dialog, which ->
                 val newUsername = input.text.toString()
+                // Update the username if the new value is not empty.
                 if (newUsername.isNotEmpty()) {
                     viewModel.updateDisplayName(newUsername)
                 } else {
@@ -88,6 +99,7 @@ class ProfileFragment : Fragment() {
         }.show()
     }
 
+    //displays a dialog for changing the user's password
     private fun showChangePasswordDialog() {
         val layout = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
@@ -97,17 +109,17 @@ class ProfileFragment : Fragment() {
             )
             setPadding(50, 0, 50, 0)
         }
-
+        // EditText for the old password
         val oldPasswordInput = EditText(requireContext()).apply {
             hint = "Old Password"
             inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
         }
-
+        // EditText for the new password.
         val newPasswordInput = EditText(requireContext()).apply {
             hint = "New Password"
             inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
         }
-
+        //add both EditTexts to the layout.
         layout.addView(oldPasswordInput)
         layout.addView(newPasswordInput)
 
@@ -117,6 +129,7 @@ class ProfileFragment : Fragment() {
             setPositiveButton("Change") { dialog, which ->
                 val oldPassword = oldPasswordInput.text.toString()
                 val newPassword = newPasswordInput.text.toString()
+                //change the password if both fields are filled
                 if (oldPassword.isNotEmpty() && newPassword.isNotEmpty()) {
                     viewModel.changePassword(oldPassword, newPassword)
                 } else {
@@ -127,8 +140,9 @@ class ProfileFragment : Fragment() {
         }.show()
     }
 
-
+    // Signs out the current user and navigates back to the sign-in screen.
     private fun logoutUser() {
+        //use Firebase Auth to sign out the current user.
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(requireContext(), SignIn::class.java)
         // Clear all activities on the stack and start new with SignInActivity
@@ -137,7 +151,7 @@ class ProfileFragment : Fragment() {
         // Start the SignInActivity
         startActivity(intent)
     }
-
+    //displays a confirmation dialog before deleting the user's account
     private fun showDeleteAccountConfirmation() {
         AlertDialog.Builder(requireContext()).apply {
             setTitle("Delete Account")
@@ -149,7 +163,7 @@ class ProfileFragment : Fragment() {
             setNegativeButton("Cancel", null)
         }.show()
     }
-
+    //handles updates to the UI based on changes in the profile's state observed from the ViewModel
     private fun handleState(state: ProfileState) {
         when (state) {
             is ProfileState.DisplayNameUpdated -> {
@@ -175,17 +189,17 @@ class ProfileFragment : Fragment() {
             is ProfileState.AccountDeleted -> {
                 // Notify user account was deleted and navigate to sign-in screen
                 Toast.makeText(requireContext(), "Account deleted successfully", Toast.LENGTH_SHORT).show()
-                logoutUser() // Assuming logoutUser navigates to SignInFragment/Activity
+                logoutUser()
             }
             is ProfileState.Error -> {
                 // Display error message
                 Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
             }
-            // Add additional states as needed
+
         }
     }
 
-
+    //cleans up the binding when the fragment's view is being destroyed to avoid memory leaks
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
