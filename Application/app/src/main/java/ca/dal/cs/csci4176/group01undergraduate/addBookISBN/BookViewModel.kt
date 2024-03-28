@@ -1,11 +1,20 @@
 package ca.dal.cs.csci4176.group01undergraduate.addBookISBN
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.GenericTypeIndicator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import android.location.Geocoder
+import java.io.IOException
+import java.util.Locale
 
 
 class BookViewModel(private val repository: BookRepository) : ViewModel() {
@@ -82,102 +91,39 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
 //    }
 //}
 
-    fun addBookToFirebase(book: Book, bookBoxKey: String?, result: (Boolean, String?) -> Unit) {
-        val databaseReference = FirebaseDatabase.getInstance().getReference("Books")
-        val bookId = databaseReference.push().key
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-
-        bookId?.let { bid ->
-            databaseReference.child(bid).setValue(book).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    bookBoxKey?.let { key ->
-                        val bookBoxRef = FirebaseDatabase.getInstance().getReference("bookBoxes").child(key)
-                        bookBoxRef.child("bookIDs").get().addOnSuccessListener { dataSnapshot ->
-                            // Use GenericTypeIndicator for a list of Strings
-                            val typeIndicator = object : GenericTypeIndicator<List<String>>() {}
-                            val currentBookIDs: List<String> = dataSnapshot.getValue(typeIndicator) ?: mutableListOf()
-
-                            // Proceed to add the book ID and update Firebase as before
-                            val updatedBookIDs = currentBookIDs.toMutableList().apply {
-                                add(bid)
-                            }
-                            bookBoxRef.child("bookIDs").setValue(updatedBookIDs).addOnCompleteListener { bookBoxTask ->
-                                if (bookBoxTask.isSuccessful) {
-                                    updateUserPoints(userId, bid, result)
-                                } else {
-                                    result(false, bookBoxTask.exception?.message ?: "Failed to update book box")
-                                }
-                            }
-                        }.addOnFailureListener {
-                            result(false, "Failed to fetch current book IDs for book box")
-                        }
-                    } ?: run {
-                        updateUserPoints(userId, bid, result)
-                    }
-                } else {
-                    result(false, task.exception?.message ?: "Unknown error while adding book")
-                }
-            }
-        } ?: run {
-            result(false, "Failed to generate a unique key for the book")
-        }
-    }
-
 //    fun addBookToFirebase(book: Book, bookBoxKey: String?, result: (Boolean, String?) -> Unit) {
 //        val databaseReference = FirebaseDatabase.getInstance().getReference("Books")
 //        val bookId = databaseReference.push().key
 //        val userId = FirebaseAuth.getInstance().currentUser?.uid
 //
 //        bookId?.let { bid ->
-//            // Add the book to the "Books" collection
+//            if (bookBoxKey != null) {
+//                book.bookBoxID = bookBoxKey
+//            };
 //            databaseReference.child(bid).setValue(book).addOnCompleteListener { task ->
 //                if (task.isSuccessful) {
-//                    // Proceed only if bookBoxKey is provided
 //                    bookBoxKey?.let { key ->
 //                        val bookBoxRef = FirebaseDatabase.getInstance().getReference("bookBoxes").child(key)
-//                        // Get or create the 'bookIDs' list under the selected book box
 //                        bookBoxRef.child("bookIDs").get().addOnSuccessListener { dataSnapshot ->
-//                            val currentBookIDs = dataSnapshot.getValue(List::class.java) as? MutableList<String> ?: mutableListOf()
-//                            // Add the new book ID to the list
-//                            currentBookIDs.add(bid)
-//                            // Update the 'bookIDs' list in Firebase
-////                            bookBoxRef.child("bookIDs").setValue(currentBookIDs).addOnCompleteListener { bookBoxTask ->
-////                                if (bookBoxTask.isSuccessful) {
-////                                    // Successfully updated the book box; now update the user's points
-////                                    updateUserPoints(userId, bid, result)
-////                                } else {
-////                                    result(false, bookBoxTask.exception?.message ?: "Failed to update book box")
-////                                }
-////                            }
-//                            bookBoxRef.child("bookIDs").get().addOnSuccessListener { dataSnapshot ->
-//                                // Initialize an empty mutable list to hold the current book IDs
-//                                val currentBookIDs = mutableListOf<String>()
-//                                // Manually extract each book ID from the dataSnapshot
-//                                dataSnapshot.children.forEach { childSnapshot ->
-//                                    childSnapshot.getValue(String::class.java)?.let { id ->
-//                                        currentBookIDs.add(id)
-//                                    }
-//                                }
-//                                // Add the new book ID to the list
-//                                currentBookIDs.add(bid)
-//                                // Update the 'bookIDs' list in Firebase
-//                                bookBoxRef.child("bookIDs").setValue(currentBookIDs).addOnCompleteListener { bookBoxTask ->
-//                                    if (bookBoxTask.isSuccessful) {
-//                                        // Successfully updated the book box; now update the user's points
-//                                        updateUserPoints(userId, bid, result)
-//                                    } else {
-//                                        result(false, bookBoxTask.exception?.message ?: "Failed to update book box")
-//                                    }
-//                                }
-//                            }.addOnFailureListener {
-//                                result(false, "Failed to fetch current book IDs for book box")
-//                            }
+//                            // Use GenericTypeIndicator for a list of Strings
+//                            val typeIndicator = object : GenericTypeIndicator<List<String>>() {}
+//                            val currentBookIDs: List<String> = dataSnapshot.getValue(typeIndicator) ?: mutableListOf()
 //
+//                            // Proceed to add the book ID and update Firebase as before
+//                            val updatedBookIDs = currentBookIDs.toMutableList().apply {
+//                                add(bid)
+//                            }
+//                            bookBoxRef.child("bookIDs").setValue(updatedBookIDs).addOnCompleteListener { bookBoxTask ->
+//                                if (bookBoxTask.isSuccessful) {
+//                                    updateUserPoints(userId, bid, result)
+//                                } else {
+//                                    result(false, bookBoxTask.exception?.message ?: "Failed to update book box")
+//                                }
+//                            }
 //                        }.addOnFailureListener {
 //                            result(false, "Failed to fetch current book IDs for book box")
 //                        }
 //                    } ?: run {
-//                        // No bookBoxKey is provided; directly update the user's points
 //                        updateUserPoints(userId, bid, result)
 //                    }
 //                } else {
@@ -188,6 +134,67 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
 //            result(false, "Failed to generate a unique key for the book")
 //        }
 //    }
+
+    fun addBookToFirebase(context: Context, book: Book, bookBoxKey: String?, result: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            val databaseReference = FirebaseDatabase.getInstance().getReference("Books")
+            val bookId = databaseReference.push().key
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+            bookId?.let { bid ->
+                if (bookBoxKey != null) {
+                    book.bookBoxID = bookBoxKey
+                    val bookBoxRef = FirebaseDatabase.getInstance().getReference("bookBoxes").child(bookBoxKey)
+                    try {
+                        val dataSnapshot = bookBoxRef.get().await()
+                        val latitude = dataSnapshot.child("latitude").getValue(Double::class.java)
+                        val longitude = dataSnapshot.child("longitude").getValue(Double::class.java)
+                        if (latitude != null && longitude != null) {
+                            val address = withContext(Dispatchers.IO) {
+                                convertCoordinatesToAddress(context, latitude, longitude)
+                            }
+                            if (address != null) {
+                                book.address = address
+                            }
+                        }
+                    } catch (e: Exception) {
+                        result(false, "Failed to fetch book box details or convert coordinates.")
+                        return@launch
+                    }
+                }
+                // Proceed to save the book to Firebase, now including the address if available
+                try {
+                    databaseReference.child(bid).setValue(book).await()
+                    updateUserPoints(userId, bid, result)
+                } catch (e: Exception) {
+                    result(false, "Failed to add book to Firebase.")
+                }
+            } ?: run {
+                result(false, "Failed to generate a unique key for the book.")
+            }
+        }
+    }
+
+
+    suspend fun convertCoordinatesToAddress(context: Context, latitude: Double, longitude: Double): String? = withContext(Dispatchers.IO) {
+        try {
+            val geocoder = Geocoder(context, Locale.getDefault())
+            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+            if (addresses!!.isNotEmpty()) {
+                val address = addresses[0]
+                // Construct a single string from the address' components
+                val addressFragments = with(address) {
+                    (0..maxAddressLineIndex).map { getAddressLine(it) }
+                }
+                addressFragments.joinToString(separator = "\n")
+            } else {
+                "No address found"
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
+    }
 
 
     private fun updateUserPoints(userId: String?, bookId: String, result: (Boolean, String?) -> Unit) {
