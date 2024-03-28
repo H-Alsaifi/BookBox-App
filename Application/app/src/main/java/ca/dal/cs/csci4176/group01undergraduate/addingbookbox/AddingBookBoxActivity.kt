@@ -14,7 +14,14 @@ import ca.dal.cs.csci4176.group01undergraduate.R
 import ca.dal.cs.csci4176.group01undergraduate.databinding.AddingBookBoxActivityBinding
 import ca.dal.cs.csci4176.group01undergraduate.displayingbookbox.BoxFragment
 import android.Manifest
+import android.graphics.PixelFormat
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.view.Gravity
+import android.view.WindowManager
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentManager
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.BookBoxViewModel
 import ca.dal.cs.csci4176.group01undergraduate.addingbookbox.viewmodels.BookBoxViewModelFactory
@@ -215,9 +222,9 @@ class AddingBookBoxActivity : AppCompatActivity() {
                 }
 
                 if (state.isSuccessful && !state.isLoading && state.error == null) {
-                    // Show success message and navigate to map view upon successful addition of a book box
-                    Toast.makeText(this@AddingBookBoxActivity, "Book Box added successfully", Toast.LENGTH_SHORT).show()
-                    navigateToMap()
+                   displayMessage("Book Box added successfully")
+//                    Toast.makeText(this@AddingBookBoxActivity, "Book Box added successfully", Toast.LENGTH_SHORT).show()
+                    navigateToMap() // This ensures navigation occurs after success
                 } else if (state.error != null) {
                     // Handle and display errors if any occurred during the process
                     handleError(state.error)
@@ -235,5 +242,16 @@ class AddingBookBoxActivity : AppCompatActivity() {
         Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_LONG).show()
     }
 
+    private fun displayMessage(message: String) {
+         val builder = AlertDialog.Builder(this)
+         builder.setMessage(message)
+         builder.setTitle("Update !")
+         builder.setCancelable(false)
+         val alertDialog = builder.create()
+         alertDialog.show()
+        Handler(Looper.getMainLooper()).postDelayed({
+           alertDialog.dismiss()
+          }, 5000)
 
+        }
 }

@@ -23,9 +23,6 @@
         android:requestLegacyExternalStorage="true">
 
         <activity
-            android:name=".RateBook"
-            android:exported="false" />
-        <activity
             android:name=".displayBookBox"
             android:exported="false" />
         <activity

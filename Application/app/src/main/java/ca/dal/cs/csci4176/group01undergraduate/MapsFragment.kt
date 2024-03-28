@@ -187,6 +187,15 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                 startActivity(intent)
             }
 
+            // Set up the "View Books" button click listener
+            val viewBooksButton: Button = bottomSheetLayout.findViewById(R.id.viewBooksButton)
+            viewBooksButton.setOnClickListener {
+                bookBoxId.let { bookBoxId ->
+                    navigateToBookListFragment(bookBoxId)
+                }
+            }
+
+
             // Set up the "Get directions" button click listener
             linearLayout.findViewById<Button>(R.id.getDirections).setOnClickListener {
                 box.location?.let { it1 -> LatLng(it1.latitude, box.location.longitude) }
@@ -198,6 +207,16 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
         return true
     }
+
+    private fun navigateToBookListFragment(bookBoxId: String) {
+        val fragment = BookListFragment.newInstance(bookBoxId)
+        parentFragmentManager.beginTransaction().apply {
+            replace(R.id.fragment_container, fragment) // Use the ID of your container where fragments are placed
+            addToBackStack(null) // Add this transaction to the back stack
+            commit() // Commit the transaction
+        }
+    }
+
 
 
     /**
@@ -399,6 +418,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             // Navigate to BoxFragment to view the list
             navigateToBoxFragment()
         }
+
 
         view.findViewById<Button>(R.id.findFav).setOnClickListener {
             // getting the firebase to find the users saved favourites

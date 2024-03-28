@@ -63,5 +63,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="book_details_title">Title: %s</string>
+    <string name="book_details_author">Author: %s</string>
+    <string name="book_details_description">Description:\n%s</string>
+    <string name="book_details_rating">Rating: %.1f/5</string>
 
 </resources>
