@@ -67,6 +67,10 @@ class ProfileFragment : Fragment() {
             // Launch the image picker
             imagePickerLauncher.launch("image/*")
         }
+        binding.rateBtn.setOnClickListener {
+            val intent: Intent = Intent(context, RateBook::class.java)
+            startActivity(intent)
+        }
     }
     // Observes changes in the ViewModel's state and updates the UI accordingly
     private fun setupObservers() {
