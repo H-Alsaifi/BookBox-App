@@ -76,6 +76,18 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
+        android:id="@+id/rateBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="292dp"
+        android:text="Rate Book"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogout"
+        app:layout_constraintStart_toEndOf="@+id/profile_image"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.961" />
+
+    <Button
         android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -84,7 +96,7 @@
         android:text="logout"
         android:backgroundTint="@color/primaryColor"
         app:layout_constraintBottom_toTopOf="@+id/btnDeleteAccount"
-        app:layout_constraintStart_toEndOf="@+id/profile_image"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.961" />
 
