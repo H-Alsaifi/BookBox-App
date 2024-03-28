@@ -471,9 +471,11 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                 map.isMyLocationEnabled = true
                 getCurrentLocation()
             }
-            // need to pass username through shared preferences to here
-            databaseReference.child("username").get().addOnSuccessListener {
-                // getting the favourites from the current user
+
+
+                // need to pass username through shared preferences to here
+            databaseReference.child("name").get().addOnSuccessListener {
+                // getting the favourites from the current user and saving the key to their favourites in an array
                 if (it.exists()) {
                     databaseReference = databaseReference.child("favourites")
                     databaseReference.addValueEventListener(object : ValueEventListener {
@@ -491,7 +493,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                     })
                 }
             }
-            var closest: String
             var minDistance: Double = 0.0
             // saves the coordinates of the closest bookbox
             var closeLong: Double = 0.0
@@ -508,7 +509,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                         var distance: Double = getDistance(lat, long)
                         // if its the first or only fav then its set to be the closes box
                         if (minDistance == 0.0) {
-                            closest = name
                             minDistance = distance
                             closeLong = long
                             closeLat = lat
@@ -518,7 +518,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                             closeLong = long
                             closeLat = lat
                             minDistance = distance
-                            closest = name
                         }
                     }
                 }
@@ -553,16 +552,32 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             }
     }
 
-    // has to be altered to account for negative long/lat values, calculates the distance between two points
-    // add if statements to convert negatives to positives and get the difference in value
+    // calculates the distance from the userc current location to the passed location
     private fun getDistance(lat: Double, long: Double): Double {
         var distance: Double
+        var lat = lat
+        var long = long
+        // converting any negative values to positive to calculate the distance
+        if (latitude < 0) {
+            latitude *= -1
+        }
+        if (longitude < 0) {
+            longitude *= -1
+        }
+        if (long < 0) {
+            long *= -1
+        }
+        if (lat < 0) {
+            lat *= -1
+        }
+        // setting the distance to be equal to the lateral distance between the two points
         if (lat < latitude) {
             distance = latitude - lat
         }
         else {
             distance = lat - latitude
         }
+        // adds the longitude distance to the total distance variable
         if (long < longitude) {
             distance += longitude - long
         }

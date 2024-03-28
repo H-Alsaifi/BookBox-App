@@ -67,6 +67,11 @@ class SignUp : AppCompatActivity() {
                                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                         //to indicate that the user has successfully signed up and going to the sign up activity
                                         putExtra("fromSignUp", true)
+                                        // saving the user email in shared preferences for accessing their saved favourites later
+                                        val sharedPref = getSharedPreferences("MyData", MODE_PRIVATE)
+                                        val editor = sharedPref.edit()
+                                        editor.putString("email", email)
+                                        editor.apply()
                                     }
                                     startActivity(intent)
                                     finish()
