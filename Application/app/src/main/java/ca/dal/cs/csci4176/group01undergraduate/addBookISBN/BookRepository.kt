@@ -22,8 +22,9 @@ class BookRepository {
                         val description = book.description ?: "No description available."
                         val isbn = book.industryIdentifiers?.find { it.type == "ISBN_13" }?.identifier ?: "N/A"
                         val rating = book.averageRating ?: 0.0
-                        val ratingInt = rating.toInt()
-                        val bookObj = Book(title, authors, isbn, description, ratingInt, "", "") // Use the actual rating
+                        val totalRatings = book.ratingsCount ?: 0
+                        val ratingInt = rating
+                        val bookObj = Book(title, authors, isbn, description, ratingInt, totalRatings, "", "") // Use the actual rating
                         liveData.postValue(BookState.Success(bookObj))
 
                     } else {

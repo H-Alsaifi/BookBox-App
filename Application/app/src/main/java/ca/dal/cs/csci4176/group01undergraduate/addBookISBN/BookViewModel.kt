@@ -13,6 +13,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import android.location.Geocoder
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import java.io.IOException
 import java.util.Locale
 
@@ -216,6 +219,25 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
         } else {
             result(false, "User is not logged in")
         }
+    }
+
+    fun getBookLiveData(bookId: String): LiveData<Book> {
+        val liveData = MutableLiveData<Book>()
+        val bookRef = FirebaseDatabase.getInstance().getReference("Books").child(bookId)
+
+        bookRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val book = snapshot.getValue(Book::class.java)
+                book?.let {
+                    liveData.value = it
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Log error
+            }
+        })
+        return liveData
     }
 
 
