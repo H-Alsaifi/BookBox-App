@@ -45,9 +45,11 @@ class RateBook : AppCompatActivity() {
         }
         // button to return the user to the previous page
         backBtn.setOnClickListener {
-            // the previous page is the profile activity
-            val Intent = Intent(this , ProfileActivity::class.java)
-            startActivity(Intent)
+            // the previous page is the profile fragment
+            val fragment = ProfileFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit()
         }
     }
 
