@@ -11,15 +11,21 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
+//ProfileViewModel extends ViewModel, managing UI-related data
 class ProfileViewModel : ViewModel() {
+    //mutableLiveData to handle changes in profile states
     private val _state = MutableLiveData<ProfileState>(ProfileState.Idle)
+    //firebase Authentication instance for user authentication tasks
     private val auth = FirebaseAuth.getInstance()
+    //reference to the 'users' node in Firebase Database for accessing user data
     private val usersRef = FirebaseDatabase.getInstance().getReference("users")
+    //get the current user's ID from FirebaseAuth.
     private val userId =
         auth.currentUser?.uid ?: throw IllegalStateException("User must be logged in")
 
     val state: LiveData<ProfileState> = _state
 
+    //handles intents representing actions to be performed on the user profile
     fun handleIntent(intent: ProfileIntent) {
         when (intent) {
 
@@ -33,14 +39,14 @@ class ProfileViewModel : ViewModel() {
 
             is ProfileIntent.DeleteAccount -> deleteAccount()
 
-//            else -> {}
         }
     }
-
+    //updates the user's email in Firebase and posts the result to the profile state
     fun updateEmail(newEmail: String) {
         userId.let { uid ->
             usersRef.child(uid).child("email").setValue(newEmail)
                 .addOnSuccessListener {
+                    //notify observers of the email update success.
                     _state.postValue(ProfileState.EmailUpdated(newEmail))
                 }
                 .addOnFailureListener { error ->
@@ -48,7 +54,7 @@ class ProfileViewModel : ViewModel() {
                 }
         }
     }
-
+    //updates the user's display name in Firebase and posts the result to the profile state
     fun updateDisplayName(displayName: String) {
         userId.let { uid ->
             usersRef.child(uid).child("displayName").setValue(displayName)
@@ -64,7 +70,7 @@ class ProfileViewModel : ViewModel() {
                 }
         }
     }
-
+    //Updates the user's profile picture in Firebase and posts the result to the profile state
     fun updateProfilePicture(pictureUri: Uri) {
         userId.let { uid ->
             usersRef.child(uid).child("profilePictureUri").setValue(pictureUri.toString())
@@ -81,7 +87,7 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-
+    //changes the user's password after re-authentication.
     fun changePassword(oldPassword: String, newPassword: String) {
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null && user.email != null) {
@@ -102,7 +108,7 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-
+    //deletes the user's account from Firebase and posts the result to the profile state
     fun deleteAccount() {
         userId.let { uid ->
             auth.currentUser?.delete()
@@ -121,11 +127,11 @@ class ProfileViewModel : ViewModel() {
                 }
         }
     }
-
+    //initializer block to load the user's profile at ViewModel initialization
     init {
         loadUserProfile()
     }
-
+    //loads the user's profile data from Firebase and updates the profile state accordingly
     fun loadUserProfile() {
         userId?.let { uid ->
             FirebaseDatabase.getInstance().getReference("users").child(uid)
@@ -140,11 +146,9 @@ class ProfileViewModel : ViewModel() {
                 }.addOnFailureListener {
                     _state.value = ProfileState.Error("Failed to fetch user data")
                 }
-        } ?: run {
-            _state.value = ProfileState.Error("User not logged in")
         }
     }
-
+    //calculates the membership status based on points and updates the profile state.
     private fun calculateMembershipStatus(points: Int): String {
         return when {
             points > 60 -> "Platinum"
@@ -155,3 +159,5 @@ class ProfileViewModel : ViewModel() {
     }
 
 }
+
+

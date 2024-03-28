@@ -1,10 +1,8 @@
 package ca.dal.cs.csci4176.group01undergraduate
 
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -29,12 +27,17 @@ class displayBookBox : AppCompatActivity() {
         val favBtn: Button = findViewById(R.id.favouriteBox)
         val backBtn: Button = findViewById(R.id.backBtn)
 
+        // displays the details of the book box that was passed from the intent
         val name = intent.getStringExtra("name")
         val description = intent.getStringExtra("description")
-        val imageUrl = intent.getStringExtra("imageUrl")
+        //val imageUrl = intent.getStringExtra("imageUrl")
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("users")
+        // getting the firebase reference to the users
+        var db: FirebaseDatabase= FirebaseDatabase.getInstance()
+        databaseReference = db.getReference()
+        databaseReference.child("users")
 
+        // displaying the book box information for the user
         boxName.setText(name)
         boxDesc.setText(description)
 

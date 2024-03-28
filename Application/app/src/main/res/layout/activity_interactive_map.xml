@@ -15,6 +15,7 @@
         map:mapType="normal"/>
 
     <!-- Buttons container -->
+
     <LinearLayout
         android:id="@+id/buttons_container"
         android:layout_width="match_parent"
