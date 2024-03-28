@@ -21,7 +21,7 @@ class BookRepository {
                         val title = book.title ?: "N/A"
                         val description = book.description ?: "No description available."
                         val isbn = book.industryIdentifiers?.find { it.type == "ISBN_13" }?.identifier ?: "N/A"
-                        val bookObj = Book(title, authors, isbn, description, 0) // Assuming rating is 0 for simplicity
+                        val bookObj = Book(title, authors, isbn, description, 0, 0) // Assuming rating is 0 for simplicity
                         liveData.postValue(BookState.Success(bookObj))
                         // TODO: Add book to Firebase here if required.
                     } else {

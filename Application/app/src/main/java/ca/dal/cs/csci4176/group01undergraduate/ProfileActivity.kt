@@ -30,7 +30,7 @@ class ProfileActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId", "WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
+        setContentView(R.layout.fragment_profile)
 
         // Initialize the ViewModel
         viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]

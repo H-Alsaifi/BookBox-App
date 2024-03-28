@@ -98,7 +98,7 @@ class BoxFragment : Fragment() {
         // Handle the click event for each book box, e.g., navigate to a detail page, or show options to add, view, or delete
         val intent = Intent(context, displayBookBox::class.java)
         // need to get username to pass on aswell
-        intent.putExtra("name", bookBox.name)
+        //intent.putExtra("name", bookBox.name)
         // will pass long and lat once updated
         //intent.putExtra("location", bookBox.location)
         intent.putExtra("description", bookBox.description)
