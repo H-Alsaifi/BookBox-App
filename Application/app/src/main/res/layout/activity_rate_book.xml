@@ -1,23 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
+    android:layout_gravity="center_horizontal"
     tools:context=".RateBook">
 
 
-    <Button
-        android:id="@+id/saveRating"
-        android:layout_width="131dp"
-        android:layout_height="57dp"
-        android:layout_marginTop="56dp"
-        android:gravity="center_vertical"
-        android:text="Save Rating"
-        app:layout_constraintTop_toBottomOf="@+id/bookRating"
-        tools:layout_editor_absoluteX="140dp" />
 
     <EditText
         android:id="@+id/bookTitle"
@@ -38,6 +31,17 @@
         tools:layout_editor_absoluteX="85dp" />
 
     <Button
+        android:id="@+id/saveRating"
+        android:layout_width="131dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="56dp"
+        android:gravity="center_vertical"
+        android:text="Save Rating"
+        app:layout_constraintTop_toBottomOf="@+id/bookRating"
+        tools:layout_editor_absoluteX="140dp" />
+
+
+    <Button
         android:id="@+id/backBtn"
         android:layout_width="137dp"
         android:layout_height="53dp"
@@ -46,4 +50,5 @@
         app:layout_constraintTop_toBottomOf="@+id/saveRating"
         tools:layout_editor_absoluteX="137dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
