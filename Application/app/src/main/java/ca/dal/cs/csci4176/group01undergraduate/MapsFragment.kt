@@ -59,7 +59,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.getValue
 import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
 import com.google.maps.PendingResult
@@ -70,7 +69,7 @@ import com.squareup.picasso.Picasso
 import java.io.IOException
 import kotlin.properties.Delegates
 
-class MapsFragment : Fragment(), OnMarkerClickListener {
+class MapsFragment : Fragment(), OnMarkerClickListener{
     // variables to store current latitude and longitude
     var latitude by Delegates.notNull<Double>()
     var longitude by Delegates.notNull<Double>()
@@ -85,7 +84,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener {
     private val southWest: LatLng = LatLng(44.6209409, -63.629210)
 
     // maps
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetBehavior : BottomSheetBehavior<LinearLayout>
     private lateinit var bottomSheetLayout: LinearLayout
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -119,7 +118,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener {
     /**
      * Acts as a callback
      */
-    private val callback = OnMapReadyCallback {
+    private val callback = OnMapReadyCallback{
 
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -179,67 +178,73 @@ class MapsFragment : Fragment(), OnMarkerClickListener {
             val linearLayout = mainActivity.findViewById<LinearLayout>(R.id.bottomSheetLayout)
             linearLayout.findViewById<TextView>(R.id.bookBoxLocation).text =
                 box.location?.let { getAddressFromLatLng(it.latitude, box.location.longitude) }
-            Picasso.get().load(box.imageUrl)
-                .into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
 
-            // Set up the "Add book for book box" button click listener
-            linearLayout.findViewById<Button>(R.id.bookBoxAddBook).setOnClickListener {
-                val intent = Intent(context, AddBookActivity::class.java).apply {
-                    putExtra("BOOK_BOX_KEY", bookBoxId)
+            // Load the image with Picasso and use a callback to handle success and error
+            Picasso.get().load(box.imageUrl).into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage), object : com.squareup.picasso.Callback {
+                override fun onSuccess() {
+                    // Image successfully loaded, now you can proceed to show the bottom sheet
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+                    // Set up the "Add book for book box" button click listener
+                    linearLayout.findViewById<Button>(R.id.bookBoxAddBook).setOnClickListener {
+                        val intent = Intent(context, AddBookActivity::class.java).apply {
+                            putExtra("BOOK_BOX_KEY", bookBoxId)
+                        }
+                        startActivity(intent)
+                    }
+
+                    // Set up the "View Books" button click listener
+                    val viewBooksButton: Button = bottomSheetLayout.findViewById(R.id.viewBooksButton)
+                    viewBooksButton.setOnClickListener {
+                        navigateToBookListFragment(bookBoxId)
+                    }
+
+                    // Set up the "Get directions" button click listener
+                    linearLayout.findViewById<Button>(R.id.getDirections).setOnClickListener {
+                        box.location?.let { it1 -> LatLng(it1.latitude, box.location.longitude) }
+                            ?.let { it2 -> getDirections(it2) }
+                    }
                 }
-                startActivity(intent)
-            }
 
-            // Set up the "View Books" button click listener
-            val viewBooksButton: Button = bottomSheetLayout.findViewById(R.id.viewBooksButton)
-            viewBooksButton.setOnClickListener {
-                bookBoxId.let { bookBoxId ->
-                    navigateToBookListFragment(bookBoxId)
+                override fun onError(e: Exception?) {
+                    // Handle the error case, e.g., show a placeholder image or an error message
+                    Toast.makeText(context, "Error loading image", Toast.LENGTH_SHORT).show()
                 }
-            }
+            })
 
-
-            // Set up the "Get directions" button click listener
-            linearLayout.findViewById<Button>(R.id.getDirections).setOnClickListener {
-                box.location?.let { it1 -> LatLng(it1.latitude, box.location.longitude) }
-                    ?.let { it2 -> getDirections(it2) }
-            }
-
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            // Return true to indicate we have handled the marker click event
+            return true
         }
-
-        return true
+        return false
     }
 
     private fun navigateToBookListFragment(bookBoxId: String) {
         val fragment = BookListFragment.newInstance(bookBoxId)
         parentFragmentManager.beginTransaction().apply {
-            replace(
-                R.id.fragment_container,
-                fragment
-            ) // Use the ID of your container where fragments are placed
+            replace(R.id.fragment_container, fragment) // Use the ID of your container where fragments are placed
             addToBackStack(null) // Add this transaction to the back stack
             commit() // Commit the transaction
         }
     }
 
 
+
     /**
      * Gets the directions from api and shows on map
      */
-    private fun requestDirection(destination: LatLng, source: LatLng) {
+    private fun requestDirection(destination: LatLng, source: LatLng){
         val geoApiContext = GeoApiContext.Builder()
             .apiKey("AIzaSyAza1wO0SS3GB207cYAZjkYWc-ugqQVCg4")
             .build()
 
         val request = DirectionsApi.newRequest(geoApiContext)
             .origin(source.latitude.toString() + "," + source.longitude.toString())
-            .destination(destination.latitude.toString() + "," + destination.longitude.toString())
+            .destination(destination.latitude.toString()+","+destination.longitude.toString())
             .mode(TravelMode.WALKING)
 
-        request.setCallback(object : PendingResult.Callback<DirectionsResult> {
+        request.setCallback(object : PendingResult.Callback<DirectionsResult>{
             override fun onResult(result: DirectionsResult?) {
-                if (result?.routes?.isNotEmpty() == true) {
+                if (result?.routes?.isNotEmpty() == true){
                     val route = result.routes[0]
                     val decodedPath = PolylineEncoding.decode(route.overviewPolyline.encodedPath)
                     val points = ArrayList<LatLng>()
@@ -260,11 +265,9 @@ class MapsFragment : Fragment(), OnMarkerClickListener {
             override fun onFailure(e: Throwable?) {
                 requireActivity().runOnUiThread {
                     Toast
-                        .makeText(
-                            requireContext(),
+                        .makeText(requireContext(),
                             "Failure to fetch Directions!",
-                            Toast.LENGTH_SHORT
-                        )
+                            Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -275,13 +278,11 @@ class MapsFragment : Fragment(), OnMarkerClickListener {
      * Gets current location and does a request via callback [requestDirection]
      */
     @SuppressLint("MissingPermission")
-    private fun getDirections(destination: LatLng) {
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+    private fun getDirections(destination: LatLng){
+        fusedLocationClient.lastLocation.addOnSuccessListener{location ->
             location?.let {
-                requestDirection(
-                    destination,
-                    LatLng(it.latitude, it.longitude),
-                )
+                requestDirection(destination,
+                    LatLng(it.latitude, it.longitude),)
             }
         }
     }
@@ -321,23 +322,21 @@ class MapsFragment : Fragment(), OnMarkerClickListener {
         val geocoder = Geocoder(requireContext())
         var string = ""
         try {
-            val addresses = geocoder.getFromLocation(lat, lng, 1)
+           val addresses = geocoder.getFromLocation(lat,lng,1)
             if (addresses != null) {
                 if (addresses.isNotEmpty()) {
                     val address = addresses[0]
-                    string = String.format(
-                        "%s %s, %s, %s %s",
+                    string = String.format("%s %s, %s, %s %s",
                         address.subThoroughfare,
                         address.thoroughfare,
                         address.subAdminArea,
                         address.adminArea,
-                        address.postalCode
-                    )
+                        address.postalCode)
                     return string
                 }
             }
 
-        } catch (e: IOException) {
+        } catch (e: IOException){
             Log.d("Error", e.toString())
         }
         return string
@@ -356,7 +355,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener {
         database = FirebaseDatabase.getInstance()
         dbReference = database.getReference("/bookBoxes")
 
-        dbReference.addValueEventListener(object : ValueEventListener {
+        dbReference.addValueEventListener(object : ValueEventListener{
             @RequiresApi(Build.VERSION_CODES.TIRAMISU)
             override fun onDataChange(snapshot: DataSnapshot) {
                 betterBookBox.clear() // Clear the existing entries to avoid duplicates
@@ -364,11 +363,9 @@ class MapsFragment : Fragment(), OnMarkerClickListener {
                     val bookBoxId = bookBoxSnapshot.key // Unique key for each book box
                     val lat = bookBoxSnapshot.child("latitude").getValue(Double::class.java)
                     val lng = bookBoxSnapshot.child("longitude").getValue(Double::class.java)
-                    val description =
-                        bookBoxSnapshot.child("description").getValue(String::class.java)
+                    val description = bookBoxSnapshot.child("description").getValue(String::class.java)
                     val imageURL = bookBoxSnapshot.child("imageUrl").getValue(String::class.java)
-                    val bookIDs = bookBoxSnapshot.child("bookIDs").children.mapNotNull { it.key }
-                        .toMutableList()
+                    val bookIDs = bookBoxSnapshot.child("bookIDs").children.mapNotNull { it.key }.toMutableList()
 
                     if (lat != null && lng != null && bookBoxId != null) {
                         val location = BookBoxLocation(lat, lng)
@@ -415,11 +412,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener {
             ) != PackageManager.PERMISSION_GRANTED
         ) {
 
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                99
-            )
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 99)
         }
 
         // bottom sheet
@@ -551,4 +544,5 @@ class MapsFragment : Fragment(), OnMarkerClickListener {
         }
         return distance
     }
+
 }
