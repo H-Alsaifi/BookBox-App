@@ -96,14 +96,14 @@ class BoxFragment : Fragment() {
     // Defines what happens when a book box in the list is clicked.
     private fun onBookBoxClicked(bookBox: BookBox) {
         // Handle the click event for each book box, e.g., navigate to a detail page, or show options to add, view, or delete
-        val intent = Intent(context, displayBookBox::class.java)
-        // need to get username to pass on aswell
-        //intent.putExtra("name", bookBox.name)
-        // will pass long and lat once updated
-        //intent.putExtra("location", bookBox.location)
-        intent.putExtra("description", bookBox.description)
-        intent.putExtra("imageUrl", bookBox.imageUrl)
-        startActivity(intent)
+//        val intent = Intent(context, displayBookBox::class.java)
+//        // need to get username to pass on aswell
+//        //intent.putExtra("name", bookBox.name)
+//        // will pass long and lat once updated
+//        //intent.putExtra("location", bookBox.location)
+//        intent.putExtra("description", bookBox.description)
+//        intent.putExtra("imageUrl", bookBox.imageUrl)
+//        startActivity(intent)
     }
 
     // Cleans up the binding when the view is destroyed to prevent memory leaks.

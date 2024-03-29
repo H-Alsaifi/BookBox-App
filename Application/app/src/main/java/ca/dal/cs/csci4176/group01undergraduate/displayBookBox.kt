@@ -49,24 +49,24 @@ class displayBookBox : AppCompatActivity() {
         boxName.setText(name)
         boxDesc.setText(description)
 
-        /// if the user clicks on the bookbox then storing it under their favourites in firebase
-        favBtn.setOnClickListener() {
-            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    // reading each users email until the current users account is found
-                    val userEmail = snapshot.child("email").value.toString()
-                    if (userEmail.equals(email, true)) {
-                        // adding the selected book box to the users favourites
-                        // has to be switched to key value or bookbox id
-                        databaseReference.child("favourites").setValue(boxName)
-                    }
-                }
-                override fun onCancelled(error: DatabaseError) {
-
-                }
-
-            })
-        }
+//        /// if the user clicks on the bookbox then storing it under their favourites in firebase
+//        favBtn.setOnClickListener() {
+//            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+//                override fun onDataChange(snapshot: DataSnapshot) {
+//                    // reading each users email until the current users account is found
+//                    val userEmail = snapshot.child("email").value.toString()
+//                    if (userEmail.equals(email, true)) {
+//                        // adding the selected book box to the users favourites
+//                        // has to be switched to key value or bookbox id
+//                        databaseReference.child("favourites").setValue(boxName)
+//                    }
+//                }
+//                override fun onCancelled(error: DatabaseError) {
+//
+//                }
+//
+//            })
+//        }
 
         // allowing the user to go back to their previous activity (box fragment)
         backBtn.setOnClickListener {

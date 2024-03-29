@@ -53,11 +53,13 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.getValue
 import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
 import com.google.maps.PendingResult
@@ -68,7 +70,7 @@ import com.squareup.picasso.Picasso
 import java.io.IOException
 import kotlin.properties.Delegates
 
-class MapsFragment : Fragment(), OnMarkerClickListener{
+class MapsFragment : Fragment(), OnMarkerClickListener {
     // variables to store current latitude and longitude
     var latitude by Delegates.notNull<Double>()
     var longitude by Delegates.notNull<Double>()
@@ -83,7 +85,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     private val southWest: LatLng = LatLng(44.6209409, -63.629210)
 
     // maps
-    private lateinit var bottomSheetBehavior : BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var bottomSheetLayout: LinearLayout
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -117,7 +119,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     /**
      * Acts as a callback
      */
-    private val callback = OnMapReadyCallback{
+    private val callback = OnMapReadyCallback {
 
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -177,7 +179,8 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             val linearLayout = mainActivity.findViewById<LinearLayout>(R.id.bottomSheetLayout)
             linearLayout.findViewById<TextView>(R.id.bookBoxLocation).text =
                 box.location?.let { getAddressFromLatLng(it.latitude, box.location.longitude) }
-            Picasso.get().load(box.imageUrl).into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
+            Picasso.get().load(box.imageUrl)
+                .into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
 
             // Set up the "Add book for book box" button click listener
             linearLayout.findViewById<Button>(R.id.bookBoxAddBook).setOnClickListener {
@@ -211,30 +214,32 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
     private fun navigateToBookListFragment(bookBoxId: String) {
         val fragment = BookListFragment.newInstance(bookBoxId)
         parentFragmentManager.beginTransaction().apply {
-            replace(R.id.fragment_container, fragment) // Use the ID of your container where fragments are placed
+            replace(
+                R.id.fragment_container,
+                fragment
+            ) // Use the ID of your container where fragments are placed
             addToBackStack(null) // Add this transaction to the back stack
             commit() // Commit the transaction
         }
     }
 
 
-
     /**
      * Gets the directions from api and shows on map
      */
-    private fun requestDirection(destination: LatLng, source: LatLng){
+    private fun requestDirection(destination: LatLng, source: LatLng) {
         val geoApiContext = GeoApiContext.Builder()
             .apiKey("AIzaSyAza1wO0SS3GB207cYAZjkYWc-ugqQVCg4")
             .build()
 
         val request = DirectionsApi.newRequest(geoApiContext)
             .origin(source.latitude.toString() + "," + source.longitude.toString())
-            .destination(destination.latitude.toString()+","+destination.longitude.toString())
+            .destination(destination.latitude.toString() + "," + destination.longitude.toString())
             .mode(TravelMode.WALKING)
 
-        request.setCallback(object : PendingResult.Callback<DirectionsResult>{
+        request.setCallback(object : PendingResult.Callback<DirectionsResult> {
             override fun onResult(result: DirectionsResult?) {
-                if (result?.routes?.isNotEmpty() == true){
+                if (result?.routes?.isNotEmpty() == true) {
                     val route = result.routes[0]
                     val decodedPath = PolylineEncoding.decode(route.overviewPolyline.encodedPath)
                     val points = ArrayList<LatLng>()
@@ -255,9 +260,11 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             override fun onFailure(e: Throwable?) {
                 requireActivity().runOnUiThread {
                     Toast
-                        .makeText(requireContext(),
+                        .makeText(
+                            requireContext(),
                             "Failure to fetch Directions!",
-                            Toast.LENGTH_SHORT)
+                            Toast.LENGTH_SHORT
+                        )
                         .show()
                 }
             }
@@ -268,11 +275,13 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
      * Gets current location and does a request via callback [requestDirection]
      */
     @SuppressLint("MissingPermission")
-    private fun getDirections(destination: LatLng){
-        fusedLocationClient.lastLocation.addOnSuccessListener{location ->
+    private fun getDirections(destination: LatLng) {
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             location?.let {
-                requestDirection(destination,
-                    LatLng(it.latitude, it.longitude),)
+                requestDirection(
+                    destination,
+                    LatLng(it.latitude, it.longitude),
+                )
             }
         }
     }
@@ -312,21 +321,23 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         val geocoder = Geocoder(requireContext())
         var string = ""
         try {
-           val addresses = geocoder.getFromLocation(lat,lng,1)
+            val addresses = geocoder.getFromLocation(lat, lng, 1)
             if (addresses != null) {
                 if (addresses.isNotEmpty()) {
                     val address = addresses[0]
-                    string = String.format("%s %s, %s, %s %s",
+                    string = String.format(
+                        "%s %s, %s, %s %s",
                         address.subThoroughfare,
                         address.thoroughfare,
                         address.subAdminArea,
                         address.adminArea,
-                        address.postalCode)
+                        address.postalCode
+                    )
                     return string
                 }
             }
 
-        } catch (e: IOException){
+        } catch (e: IOException) {
             Log.d("Error", e.toString())
         }
         return string
@@ -345,7 +356,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         database = FirebaseDatabase.getInstance()
         dbReference = database.getReference("/bookBoxes")
 
-        dbReference.addValueEventListener(object : ValueEventListener{
+        dbReference.addValueEventListener(object : ValueEventListener {
             @RequiresApi(Build.VERSION_CODES.TIRAMISU)
             override fun onDataChange(snapshot: DataSnapshot) {
                 betterBookBox.clear() // Clear the existing entries to avoid duplicates
@@ -353,9 +364,11 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                     val bookBoxId = bookBoxSnapshot.key // Unique key for each book box
                     val lat = bookBoxSnapshot.child("latitude").getValue(Double::class.java)
                     val lng = bookBoxSnapshot.child("longitude").getValue(Double::class.java)
-                    val description = bookBoxSnapshot.child("description").getValue(String::class.java)
+                    val description =
+                        bookBoxSnapshot.child("description").getValue(String::class.java)
                     val imageURL = bookBoxSnapshot.child("imageUrl").getValue(String::class.java)
-                    val bookIDs = bookBoxSnapshot.child("bookIDs").children.mapNotNull { it.key }.toMutableList()
+                    val bookIDs = bookBoxSnapshot.child("bookIDs").children.mapNotNull { it.key }
+                        .toMutableList()
 
                     if (lat != null && lng != null && bookBoxId != null) {
                         val location = BookBoxLocation(lat, lng)
@@ -402,7 +415,11 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             ) != PackageManager.PERMISSION_GRANTED
         ) {
 
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 99)
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                99
+            )
         }
 
         // bottom sheet
@@ -421,70 +438,67 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
 
         view.findViewById<Button>(R.id.findFav).setOnClickListener {
-            // getting the firebase to find the users saved favourites
             var database: FirebaseDatabase = FirebaseDatabase.getInstance()
             var databaseReference: DatabaseReference = database.getReference("users")
-            // array to hold the users favourite book boxes
-            var favourites = emptyArray<String>()
-            // gets the nearest favourite bookbox and displays its location
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+            // getting the users current location
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                == PackageManager.PERMISSION_GRANTED
+            ) {
                 map.isMyLocationEnabled = true
                 getCurrentLocation()
             }
 
+            // getting the id of the currently logged in user to check their account
+            val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+            // getting the reference to the logged in user's stored favorites
+            databaseReference = databaseReference.child(userId).child("favorites")
+            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        // stores coords of all user favorited books
+                        val favCoords: MutableList<coords> = mutableListOf()
+                        for (contactSnap in snapshot.children) {
+                            // getting the long and lat coordinates of the boox boxes
+                            val favlong: Double = (contactSnap.child("boxLong").value as Double)
+                            val favlat: Double = (contactSnap.child("boxLat").value as Double)
+                            // and storing them as coords object to add to the list
+                            val coord: coords = coords(favlat, favlong)
+                            favCoords.add(coord)
 
-                // need to pass username through shared preferences to here
-            databaseReference.child("name").get().addOnSuccessListener {
-                // getting the favourites from the current user and saving the key to their favourites in an array
-                if (it.exists()) {
-                    databaseReference = databaseReference.child("favourites")
-                    databaseReference.addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            if (snapshot.exists()) {
-                                for (contactSnap in snapshot.children) {
-                                    val fav = contactSnap.value
-                                    favourites += (fav!!).toString()
+                            // saves the coordinates of the closest bookbox and the current nearest distance
+                            var minDistance: Double = 0.0
+                            var closeLong: Double = 0.0
+                            var closeLat: Double = 0.0
+                            // comparing the user favourites with the book boxes
+                            for ((lat, long) in favCoords) {
+                                var distance: Double = getDistance(lat, long)
+                                // if its the first or only fav then its set to be the closest box
+                                if (minDistance == 0.0) {
+                                    minDistance = distance
+                                    closeLong = long
+                                    closeLat = lat
+                                }
+                                // if the new book box had a closer distance then its now saved as such
+                                if (distance < minDistance) {
+                                    closeLong = long
+                                    closeLat = lat
+                                    minDistance = distance
                                 }
                             }
-                        }
-                        override fun onCancelled(error: DatabaseError) {
-                            // error finding data
-                        }
-                    })
-                }
-            }
-            var minDistance: Double = 0.0
-            // saves the coordinates of the closest bookbox
-            var closeLong: Double = 0.0
-            var closeLat: Double = 0.0
-            // comparing the user favourites with the book boxes
-            for (name in favourites) {
-                databaseReference = FirebaseDatabase.getInstance().getReference("bookBoxes")
-                // databaseReference.key
-                databaseReference.child("name").child(name).get().addOnSuccessListener {
-                    if (it.exists()) {
-                        // get the latitude and longitude of the bookbox then calculate the distance, the one with the smallest distance gets displayed
-                        var lat: Double = databaseReference.child("latitude").get().toString().toDouble()
-                        var long: Double = databaseReference.child("latitude").get().toString().toDouble()
-                        var distance: Double = getDistance(lat, long)
-                        // if its the first or only fav then its set to be the closes box
-                        if (minDistance == 0.0) {
-                            minDistance = distance
-                            closeLong = long
-                            closeLat = lat
-                        }
-                        // if the new book box had a closer distance then its now saved as such
-                        if (distance < minDistance) {
-                            closeLong = long
-                            closeLat = lat
-                            minDistance = distance
+                            // setting the location in the output text
+                            var outputTxt: String = "Nearby BookBox at: lat: " + closeLat.toString() + " long: " + closeLong.toString()
+                            view.findViewById<TextView>(R.id.favLocation).setText(outputTxt)
                         }
                     }
                 }
-            }
-            var outputTxt: String = "Nearby BookBox at: latitude: " + closeLat.toString() + " longitude: " + closeLong.toString()
-            view.findViewById<TextView>(R.id.favLocation).setText(outputTxt)
+                override fun onCancelled(error: DatabaseError) {
+                    // error reading from database
+                }
+            })
+
         }
 
         // Set up button to add a new book box
@@ -493,21 +507,24 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             startActivity(Intent(context, AddingBookBoxActivity::class.java))
         }
     }
+
     private fun navigateToBoxFragment() {
         parentFragmentManager.beginTransaction().apply {
-            replace(R.id.fragment_container, BoxFragment()) // Use the ID of your container where fragments are placed
+            replace(
+                R.id.fragment_container,
+                BoxFragment()
+            ) // Use the ID of your container where fragments are placed
             addToBackStack(null) // Add this transaction to the back stack
             commit() // Commit the transaction
         }
     }
 
-
-    // calculates the distance from the userc current location to the passed location
+    // calculates the distance from the user current location to the passed location
     private fun getDistance(lat: Double, long: Double): Double {
         var distance: Double
         var lat = lat
         var long = long
-        // converting any negative values to positive to calculate the distance
+        // converting any negative values to positive for calculating the distance
         if (latitude < 0) {
             latitude *= -1
         }
@@ -523,18 +540,15 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         // setting the distance to be equal to the lateral distance between the two points
         if (lat < latitude) {
             distance = latitude - lat
-        }
-        else {
+        } else {
             distance = lat - latitude
         }
         // adds the longitude distance to the total distance variable
         if (long < longitude) {
             distance += longitude - long
-        }
-        else {
+        } else {
             distance += long - longitude
         }
         return distance
     }
-
 }
