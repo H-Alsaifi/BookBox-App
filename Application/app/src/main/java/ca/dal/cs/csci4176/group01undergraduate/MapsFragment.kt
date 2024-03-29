@@ -177,36 +177,46 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             val linearLayout = mainActivity.findViewById<LinearLayout>(R.id.bottomSheetLayout)
             linearLayout.findViewById<TextView>(R.id.bookBoxLocation).text =
                 box.location?.let { getAddressFromLatLng(it.latitude, box.location.longitude) }
-            Picasso.get().load(box.imageUrl).into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage))
 
-            // Set up the "Add book for book box" button click listener
-            linearLayout.findViewById<Button>(R.id.bookBoxAddBook).setOnClickListener {
-                val intent = Intent(context, AddBookActivity::class.java).apply {
-                    putExtra("BOOK_BOX_KEY", bookBoxId)
+            // Load the image with Picasso and use a callback to handle success and error
+            Picasso.get().load(box.imageUrl).into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage), object : com.squareup.picasso.Callback {
+                override fun onSuccess() {
+                    // Image successfully loaded, now you can proceed to show the bottom sheet
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+                    // Set up the "Add book for book box" button click listener
+                    linearLayout.findViewById<Button>(R.id.bookBoxAddBook).setOnClickListener {
+                        val intent = Intent(context, AddBookActivity::class.java).apply {
+                            putExtra("BOOK_BOX_KEY", bookBoxId)
+                        }
+                        startActivity(intent)
+                    }
+
+                    // Set up the "View Books" button click listener
+                    val viewBooksButton: Button = bottomSheetLayout.findViewById(R.id.viewBooksButton)
+                    viewBooksButton.setOnClickListener {
+                        navigateToBookListFragment(bookBoxId)
+                    }
+
+                    // Set up the "Get directions" button click listener
+                    linearLayout.findViewById<Button>(R.id.getDirections).setOnClickListener {
+                        box.location?.let { it1 -> LatLng(it1.latitude, box.location.longitude) }
+                            ?.let { it2 -> getDirections(it2) }
+                    }
                 }
-                startActivity(intent)
-            }
 
-            // Set up the "View Books" button click listener
-            val viewBooksButton: Button = bottomSheetLayout.findViewById(R.id.viewBooksButton)
-            viewBooksButton.setOnClickListener {
-                bookBoxId.let { bookBoxId ->
-                    navigateToBookListFragment(bookBoxId)
+                override fun onError(e: Exception?) {
+                    // Handle the error case, e.g., show a placeholder image or an error message
+                    Toast.makeText(context, "Error loading image", Toast.LENGTH_SHORT).show()
                 }
-            }
+            })
 
-
-            // Set up the "Get directions" button click listener
-            linearLayout.findViewById<Button>(R.id.getDirections).setOnClickListener {
-                box.location?.let { it1 -> LatLng(it1.latitude, box.location.longitude) }
-                    ?.let { it2 -> getDirections(it2) }
-            }
-
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            // Return true to indicate we have handled the marker click event
+            return true
         }
-
-        return true
+        return false
     }
+
 
     private fun navigateToBookListFragment(bookBoxId: String) {
         val fragment = BookListFragment.newInstance(bookBoxId)
