@@ -67,5 +67,29 @@
     <string name="book_details_author">Author: %s</string>
     <string name="book_details_description">Description:\n%s</string>
     <string name="book_details_rating">Rating: %.1f/5</string>
+    <string name="instructions">Enter search keyword and choose filters below:</string>
+    <string name="search_books">Search Books</string>
+    <string name="filter_by">Filter by:</string>
+    <string name="title">Title</string>
+    <string name="author">Author</string>
+    <string name="enter_search_query">Enter search query...</string>
+    <string name="search1">Search</string>
+    <string name="change_password">Change Password</string>
+    <string name="new_password">New Password</string>
+    <string name="old_password">Old Password</string>
+    <string name="membership_level">Membership Level: Bronze</string>
+    <string name="edit_password">edit password</string>
+    <string name="delete_account">delete account</string>
+    <string name="logout">Logout</string>
+    <string name="edit_username">edit username</string>
+    <string name="password">Password</string>
+    <string name="developer_appsnipp_com">developer@appsnipp.com</string>
+    <string name="developer">Developer</string>
+    <string name="profile_picture">profile picture</string>
+    <string name="contact_support1">Contact Support</string>
+    <string name="enable_location_services">Enable Location Services</string>
+    <string name="enable">Enable</string>
+    <string name="replyBack">Please submit your info and we will get back to you in 3–5 business days.</string>
+    <string name="books_in_box">Books in Box</string>
 
 </resources>

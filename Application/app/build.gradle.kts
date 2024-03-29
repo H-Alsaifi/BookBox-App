@@ -104,10 +104,11 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.database.ktx)
     implementation(libs.firebase.database)
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
     //end
 
+    //noinspection UseTomlInstead
     implementation("com.google.firebase:firebase-analytics")
 
     // isbn
@@ -122,15 +123,13 @@ dependencies {
     // google maps
     implementation(libs.play.services.location)
     implementation(libs.google.maps.services)
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.activity:activity:1.8.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation ("com.squareup.picasso:picasso:2.71828")
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity.v180)
+    implementation(libs.androidx.constraintlayout)
+    implementation (libs.picasso)
 
-
-    implementation ("androidx.fragment:fragment-ktx:1.3.6")
-
+    implementation (libs.androidx.fragment.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -139,7 +138,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-
-
 }
