@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapErrorFragment">
+    tools:context=".view.fragments.MapErrorFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -17,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="160dp"
             android:layout_marginTop="32dp"
-            android:text="Enable"
+            android:text="@string/enable"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mapErrorMessage" />
 
@@ -27,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="124dp"
             android:layout_marginTop="308dp"
-            android:text="Enable Location Services"
+            android:text="@string/enable_location_services"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
