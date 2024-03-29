@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">The Book Box</string>
+    <string name="app_name">Book Box</string>
 
     <string name="title_activity_interactive_map">InteractiveMap</string>
 

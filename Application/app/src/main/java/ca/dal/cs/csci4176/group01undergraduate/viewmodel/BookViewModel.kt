@@ -101,7 +101,7 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
             }
         }
     }
-    private suspend fun convertCoordinatesToAddress(context: Context, latitude: Double, longitude: Double): String? = withContext(Dispatchers.IO) {
+    suspend fun convertCoordinatesToAddress(context: Context, latitude: Double, longitude: Double): String? = withContext(Dispatchers.IO) {
         try {
             val geocoder = Geocoder(context, Locale.getDefault())
             val addresses = geocoder.getFromLocation(latitude, longitude, 1)

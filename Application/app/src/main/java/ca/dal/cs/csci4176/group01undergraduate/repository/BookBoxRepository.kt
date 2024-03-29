@@ -14,6 +14,11 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import android.Manifest
+import android.location.Geocoder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.util.Locale
 
 
 /**
@@ -41,31 +46,34 @@ class BookBoxRepository(private val context: Context) {
      * @return A [Result] containing the unique key of the newly added book box entry in the database if successful, or an exception if failed.
      */
     suspend fun submitDetails(imageUri: Uri, location: BookBoxLocation, description: String = "No Description"): Result<String> {
-        return try {
-            // Upload the image and get its URL
-            val imageUrl = uploadPicture(imageUri).getOrThrow()
-            // Initialize with a placeholder for book IDs, can be populated later
-            val bookIDs = mutableListOf(" ")
+        // Attempt to convert coordinates to address, use "N/A" as fallback
+        val address = convertCoordinatesToAddress(location.latitude, location.longitude).getOrDefault("N/A")
 
-            // Prepare the details to be stored in Firebase Database
+        // Proceed with submitting the book box details
+        return try {
+            val imageUrl = uploadPicture(imageUri).getOrThrow()
+            val bookIDs = mutableListOf<String>()
             val bookBoxDetails = mapOf(
                 "description" to if (description.isBlank()) "No Description" else description,
                 "imageUrl" to imageUrl.toString(),
                 "latitude" to location.latitude,
                 "longitude" to location.longitude,
-                "bookIDs" to bookIDs
+                "bookIDs" to bookIDs,
+                "address" to address
             )
 
             // Push the new book box entry to the database and store its details
             val pushReference = databaseReference.push()
             pushReference.setValue(bookBoxDetails).await()
+
             // Return the unique key of the new entry
             Result.success(pushReference.key ?: "Unknown Key")
         } catch (e: Exception) {
-            // Return an error result in case of failure
             Result.failure(e)
         }
     }
+
+
 
     /**
      * Uploads an image to Firebase Storage and returns the URL to access it.
@@ -121,6 +129,29 @@ class BookBoxRepository(private val context: Context) {
         }.addOnFailureListener { exception ->
             // Resume with an exception in case of failure
             continuation.resumeWithException(exception)
+        }
+    }
+
+    /**
+     * Converts the latitude and longitude to an address string
+     * @return Address String
+     */
+    suspend fun convertCoordinatesToAddress(latitude: Double, longitude: Double): Result<String> = suspendCancellableCoroutine { continuation ->
+        try {
+            val geocoder = Geocoder(context, Locale.getDefault())
+            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+
+            if (addresses != null) {
+                if (addresses.isNotEmpty()) {
+                    val address = addresses[0]
+                    val addressString = address.getAddressLine(0)
+                    continuation.resume(Result.success(addressString))
+                } else {
+                    continuation.resume(Result.failure(Exception("No address found")))
+                }
+            }
+        } catch (e: Exception) {
+            continuation.resumeWithException(e)
         }
     }
 }
