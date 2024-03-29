@@ -75,12 +75,13 @@ class BoxFragment : Fragment() {
                     val imageUrl = child.child("imageUrl").value as? String
                     val latitude = child.child("latitude").getValue(Double::class.java)
                     val longitude = child.child("longitude").getValue(Double::class.java)
+                    val address = child.child("address").value as? String
 
                     if (latitude != null && longitude != null) {
                         val location = BookBoxLocation(latitude, longitude)
                         val bookIDs = child.child("bookIDs").children.map { it.key ?: "" }.toMutableList()
 
-                        BookBox(location, description, imageUrl, bookIDs) // Constructs a BookBox object.
+                        BookBox(location, address, description, imageUrl, bookIDs) // Constructs a BookBox object.
                     } else {
                         null // Returns null if latitude or longitude is missing, filtering out incomplete entries.
                     }

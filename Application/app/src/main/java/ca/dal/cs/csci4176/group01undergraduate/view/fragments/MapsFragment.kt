@@ -168,7 +168,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             // Find the bottomSheet
             val linearLayout = mainActivity.findViewById<LinearLayout>(R.id.bottomSheetLayout)
             linearLayout.findViewById<TextView>(R.id.bookBoxLocation).text =
-                box.location?.let { getAddressFromLatLng(it.latitude, box.location.longitude) }
+                box.location?.let { box.address }
 
             // Load the image with Picasso and use a callback to handle success and error
             Picasso.get().load(box.imageUrl).into(linearLayout.findViewById<ImageView>(R.id.bookBoxImage), object : com.squareup.picasso.Callback {
@@ -327,7 +327,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                     return string
                 }
             }
-
         } catch (e: IOException){
             Log.d("Error", e.toString())
         }
@@ -355,13 +354,14 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                     val bookBoxId = bookBoxSnapshot.key // Unique key for each book box
                     val lat = bookBoxSnapshot.child("latitude").getValue(Double::class.java)
                     val lng = bookBoxSnapshot.child("longitude").getValue(Double::class.java)
+                    val address = bookBoxSnapshot.child("address").getValue((String::class.java))
                     val description = bookBoxSnapshot.child("description").getValue(String::class.java)
                     val imageURL = bookBoxSnapshot.child("imageUrl").getValue(String::class.java)
                     val bookIDs = bookBoxSnapshot.child("bookIDs").children.mapNotNull { it.key }.toMutableList()
 
                     if (lat != null && lng != null && bookBoxId != null) {
                         val location = BookBoxLocation(lat, lng)
-                        val bookBox = BookBox(location, description, imageURL, bookIDs)
+                        val bookBox = BookBox(location, address, description, imageURL, bookIDs)
                         betterBookBox[bookBoxId] = bookBox // Use the unique key for each book box
                     }
                 }
