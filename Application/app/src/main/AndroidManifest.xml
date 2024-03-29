@@ -23,23 +23,20 @@
         android:requestLegacyExternalStorage="true">
 
         <activity
-            android:name=".RateBook"
+            android:name=".view.activities.displayBookBox"
             android:exported="false" />
         <activity
-            android:name=".displayBookBox"
+            android:name=".intent.ProfileIntent"
             android:exported="false" />
         <activity
-            android:name=".ProfileIntent"
+            android:name=".viewmodel.ProfileViewModel"
             android:exported="false" />
         <activity
-            android:name=".ProfileViewModel"
-            android:exported="false" />
-        <activity
-            android:name=".ProfileFragment"
+            android:name=".view.fragments.ProfileFragment"
             android:theme="@style/Theme.Group01Undergraduate"
             android:exported="false" />
         <activity
-            android:name=".addingbookbox.AddingBookBoxActivity"
+            android:name=".view.activities.AddingBookBoxActivity"
             android:theme="@style/Theme.Group01Undergraduate"
             android:exported="false" />
 
@@ -50,13 +47,13 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".InteractiveMap" />
+        <activity android:name=".view.activities.InteractiveMap" />
         <activity
-            android:name=".SignUp"
+            android:name=".view.activities.SignUpActivity"
             android:exported="false" />
 
         <activity
-            android:name=".SignIn"
+            android:name=".view.activities.SignInActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,17 +62,16 @@
         </activity>
 
         <activity
-            android:name=".ResetPasswordActivity"
+            android:name=".view.activities.ResetPasswordActivity"
             android:exported="false" />
 
         <activity
-            android:name=".AddBookActivity"
+            android:name=".view.activities.AddBookActivity"
             android:exported="false" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".view.activities.MainActivity"
             android:exported="true" />
 
     </application>
-
 </manifest>

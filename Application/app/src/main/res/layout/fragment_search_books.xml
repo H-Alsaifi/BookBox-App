@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -9,7 +10,7 @@
         android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Search Books"
+        android:text="@string/search_books"
         android:textSize="24sp"
         android:textStyle="bold"
         android:padding="16dp"
@@ -19,7 +20,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enter search keyword and choose filters below:"
+        android:text="@string/instructions"
         android:textSize="16sp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
@@ -37,21 +38,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Filter by: "
+            android:text="@string/filter_by"
             android:textSize="16sp"/>
 
         <CheckBox
             android:id="@+id/searchByNameCheckbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Title"
+            android:text="@string/title"
             android:textSize="16sp"/>
 
         <CheckBox
             android:id="@+id/searchByAuthorCheckbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Author"
+            android:text="@string/author"
             android:textSize="16sp"/>
     </LinearLayout>
 
@@ -60,18 +61,20 @@
         android:id="@+id/searchQueryEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter search query..."
+        android:hint="@string/enter_search_query"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingTop="8dp"
-        android:paddingBottom="8dp"/>
+        android:paddingBottom="8dp"
+        android:autofillHints=""
+        tools:ignore="TextFields" />
 
     <!-- Search Button -->
     <Button
         android:id="@+id/searchButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search"
+        android:text="@string/search1"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"/>
 
