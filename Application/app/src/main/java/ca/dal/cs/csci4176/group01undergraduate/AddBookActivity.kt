@@ -80,7 +80,6 @@ class AddBookActivity : AppCompatActivity() {
     private fun restartActivity() {
         val intent = Intent(this, AddBookActivity::class.java)
         startActivity(intent)
-        finish()
     }
 
 
