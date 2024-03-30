@@ -13,6 +13,11 @@ import java.net.URL
 import android.location.Geocoder
 import java.io.IOException
 import android.util.Log
+import android.widget.Toast
+import ca.dal.cs.csci4176.group01undergraduate.coords
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.extensions.CacheImplementation.Companion.DEFAULT
 import ca.dal.cs.csci4176.group01undergraduate.model.BookBox
 
 // Adapter class for managing the display of book boxes in a RecyclerView.
@@ -51,7 +56,6 @@ class BookBoxAdapter(
     // ViewHolder class for book boxes. Holds the view for each book box item.
     inner class BookBoxViewHolder(private val binding: ItemBookBoxBinding) : RecyclerView.ViewHolder(binding.root) {
         // Binds a book box item to the view.
-        @SuppressLint("SetTextI18n")
         fun bind(bookBox: BookBox) {
             // Attempt to get a human-readable address for the book box location.
             val location = bookBox.location
@@ -86,6 +90,21 @@ class BookBoxAdapter(
                     binding.imageView.setImageBitmap(bitmap)
                 }
             }.start()
+
+            // adding the selected bookbox to the users favorite list
+            binding.favBoxBtn.setOnClickListener {
+                // getting the id of the currently logged in user to save the favorite in their account
+                val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                val loc = bookBox.location
+                val userRef = FirebaseDatabase.getInstance().getReference("users").child(userId)
+                // saving the coords of the favorite box in the users favorites
+                val Coords: coords? = loc?.let { it1 -> location?.let { it2 ->
+                    coords(it1.longitude,
+                        it2.latitude)
+                } }
+                // saving the new favorite book box coordinates
+                userRef.child("favorites").push().setValue(Coords)
+            }
 
             // Set a click listener to handle user interaction with the book box item.
             itemView.setOnClickListener {

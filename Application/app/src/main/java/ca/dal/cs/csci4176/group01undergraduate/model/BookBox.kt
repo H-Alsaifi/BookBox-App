@@ -14,6 +14,6 @@ data class BookBox(
     val location: BookBoxLocation? = null,
     val address: String? = null,
     val description: String? = null,
-    val imageUrl: String? = null,
+    val imageUrl: MutableList<String> = null,
     val bookIDs: MutableList<String> = mutableListOf()
 )

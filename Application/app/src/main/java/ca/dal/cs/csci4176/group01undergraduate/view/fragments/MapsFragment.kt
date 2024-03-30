@@ -10,6 +10,7 @@ import android.os.Build
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +26,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import ca.dal.cs.csci4176.group01undergraduate.R
+import ca.dal.cs.csci4176.group01undergraduate.coords
 import ca.dal.cs.csci4176.group01undergraduate.model.BookBoxLocation
 import ca.dal.cs.csci4176.group01undergraduate.model.BookBox
 import ca.dal.cs.csci4176.group01undergraduate.view.activities.AddBookActivity
@@ -45,6 +47,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -327,6 +330,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                     return string
                 }
             }
+
         } catch (e: IOException){
             Log.d("Error", e.toString())
         }
@@ -354,14 +358,13 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                     val bookBoxId = bookBoxSnapshot.key // Unique key for each book box
                     val lat = bookBoxSnapshot.child("latitude").getValue(Double::class.java)
                     val lng = bookBoxSnapshot.child("longitude").getValue(Double::class.java)
-                    val address = bookBoxSnapshot.child("address").getValue((String::class.java))
                     val description = bookBoxSnapshot.child("description").getValue(String::class.java)
                     val imageURL = bookBoxSnapshot.child("imageUrl").getValue(String::class.java)
                     val bookIDs = bookBoxSnapshot.child("bookIDs").children.mapNotNull { it.key }.toMutableList()
 
                     if (lat != null && lng != null && bookBoxId != null) {
                         val location = BookBoxLocation(lat, lng)
-                        val bookBox = BookBox(location, address, description, imageURL, bookIDs)
+                        val bookBox = BookBox(location, description, imageURL, bookIDs)
                         betterBookBox[bookBoxId] = bookBox // Use the unique key for each book box
                     }
                 }
@@ -423,71 +426,67 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
 
 
         view.findViewById<Button>(R.id.findFav).setOnClickListener {
-            // getting the firebase to find the users saved favourites
-            val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+            var database: FirebaseDatabase = FirebaseDatabase.getInstance()
             var databaseReference: DatabaseReference = database.getReference("users")
-            // array to hold the users favourite book boxes
-            var favourites = emptyArray<String>()
-            // gets the nearest favourite bookbox and displays its location
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+            // getting the users current location
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                == PackageManager.PERMISSION_GRANTED
+            ) {
                 map.isMyLocationEnabled = true
                 getCurrentLocation()
             }
-            // need to pass username through shared preferences to here
-            databaseReference.child("username").get().addOnSuccessListener {
-                // getting the favourites from the current user
-                if (it.exists()) {
-                    databaseReference = databaseReference.child("favourites")
-                    databaseReference.addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            if (snapshot.exists()) {
-                                for (contactSnap in snapshot.children) {
-                                    val fav = contactSnap.value
-                                    favourites += (fav!!).toString()
+
+            // getting the id of the currently logged in user to check their account
+            val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+            // getting the reference to the logged in user's stored favorites
+            databaseReference = databaseReference.child(userId).child("favorites")
+            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        // stores coords of all user favorited books
+                        val favCoords: MutableList<coords> = mutableListOf()
+                        for (contactSnap in snapshot.children) {
+                            // getting the long and lat coordinates of the boox boxes
+                            val favlong: Double = (contactSnap.child("boxLong").value as Double)
+                            val favlat: Double = (contactSnap.child("boxLat").value as Double)
+                            // and storing them as coords object to add to the list
+                            val coord: coords = coords(favlat, favlong)
+                            favCoords.add(coord)
+
+                            // saves the coordinates of the closest bookbox and the current nearest distance
+                            var minDistance: Double = 0.0
+                            var closeLong: Double = 0.0
+                            var closeLat: Double = 0.0
+                            // comparing the user favourites with the book boxes
+                            for ((lat, long) in favCoords) {
+                                var distance: Double = getDistance(lat, long)
+                                // if its the first or only fav then its set to be the closest box
+                                if (minDistance == 0.0) {
+                                    minDistance = distance
+                                    closeLong = long
+                                    closeLat = lat
+                                }
+                                // if the new book box had a closer distance then its now saved as such
+                                if (distance < minDistance) {
+                                    closeLong = long
+                                    closeLat = lat
+                                    minDistance = distance
                                 }
                             }
-                        }
-                        override fun onCancelled(error: DatabaseError) {
-                            // error finding data
-                        }
-                    })
-                }
-            }
-            var closest: String
-            var minDistance: Double = 0.0
-            // saves the coordinates of the closest bookbox
-            var closeLong: Double = 0.0
-            var closeLat: Double = 0.0
-            // comparing the user favourites with the book boxes
-            for (name in favourites) {
-                databaseReference = FirebaseDatabase.getInstance().getReference("bookBoxes")
-                // databaseReference.key
-                databaseReference.child("name").child(name).get().addOnSuccessListener {
-                    if (it.exists()) {
-                        // get the latitude and longitude of the bookbox then calculate the distance, the one with the smallest distance gets displayed
-                        val lat: Double = databaseReference.child("latitude").get().toString().toDouble()
-                        val long: Double = databaseReference.child("latitude").get().toString().toDouble()
-                        val distance: Double = getDistance(lat, long)
-                        // if its the first or only fav then its set to be the closes box
-                        if (minDistance == 0.0) {
-                            closest = name
-                            minDistance = distance
-                            closeLong = long
-                            closeLat = lat
-                        }
-                        // if the new book box had a closer distance then its now saved as such
-                        if (distance < minDistance) {
-                            closeLong = long
-                            closeLat = lat
-                            minDistance = distance
-                            closest = name
+                            // setting the location in the output text
+                            var outputTxt: String = "Nearby BookBox at: lat: " + closeLat.toString() + " long: " + closeLong.toString()
+                            view.findViewById<TextView>(R.id.favLocation).setText(outputTxt)
                         }
                     }
                 }
-            }
-            val outputTxt: String = "Nearby BookBox at: latitude: $closeLat longitude: $closeLong"
-            view.findViewById<TextView>(R.id.favLocation).setText(outputTxt)
+                override fun onCancelled(error: DatabaseError) {
+                    // error reading from database
+                }
+            })
+
         }
 
         // Set up button to add a new book box
@@ -496,27 +495,47 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             startActivity(Intent(context, AddingBookBoxActivity::class.java))
         }
     }
+
     private fun navigateToBoxFragment() {
         parentFragmentManager.beginTransaction().apply {
-            replace(R.id.fragment_container, BoxFragment()) // Use the ID of your container where fragments are placed
+            replace(
+                R.id.fragment_container,
+                BoxFragment()
+            ) // Use the ID of your container where fragments are placed
             addToBackStack(null) // Add this transaction to the back stack
             commit() // Commit the transaction
         }
     }
 
-
-    // has to be altered to account for negative long/lat values, calculates the distance between two points
-    // add if statements to convert negatives to positives and get the difference in value
+    // calculates the distance from the user current location to the passed location
     private fun getDistance(lat: Double, long: Double): Double {
-        var distance: Double = if (lat < latitude) {
-            latitude - lat
-        } else {
-            lat - latitude
+        var distance: Double
+        var lat = lat
+        var long = long
+        // converting any negative values to positive for calculating the distance
+        if (latitude < 0) {
+            latitude *= -1
         }
-        distance += if (long < longitude) {
-            longitude - long
+        if (longitude < 0) {
+            longitude *= -1
+        }
+        if (long < 0) {
+            long *= -1
+        }
+        if (lat < 0) {
+            lat *= -1
+        }
+        // setting the distance to be equal to the lateral distance between the two points
+        if (lat < latitude) {
+            distance = latitude - lat
         } else {
-            long - longitude
+            distance = lat - latitude
+        }
+        // adds the longitude distance to the total distance variable
+        if (long < longitude) {
+            distance += longitude - long
+        } else {
+            distance += long - longitude
         }
         return distance
     }

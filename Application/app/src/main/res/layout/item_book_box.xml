@@ -45,4 +45,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:textSize="14sp" />
 
+    <Button
+        android:id="@+id/favBoxBtn"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:text="Favorite"
+        app:layout_constraintEnd_toEndOf="@+id/descriptionTextView"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toStartOf="@+id/descriptionTextView"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

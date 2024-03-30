@@ -51,6 +51,11 @@ class SignInActivity : AppCompatActivity() {
                             .edit().putBoolean("staySign", staySign).apply()
                         Toast.makeText(this, "SignIn Successful", Toast.LENGTH_SHORT).show()
 
+                        // saving the user email in shared preferences for accessing their saved favourites later
+                        val sharedPref = getSharedPreferences("MyData", MODE_PRIVATE)
+                        val editor = sharedPref.edit()
+                        editor.putString("email", email)
+                        editor.apply()
                         //navigating to main activity if it is successful
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
