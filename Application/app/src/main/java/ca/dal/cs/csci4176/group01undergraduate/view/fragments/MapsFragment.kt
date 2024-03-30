@@ -10,7 +10,6 @@ import android.os.Build
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -358,13 +357,14 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                     val bookBoxId = bookBoxSnapshot.key // Unique key for each book box
                     val lat = bookBoxSnapshot.child("latitude").getValue(Double::class.java)
                     val lng = bookBoxSnapshot.child("longitude").getValue(Double::class.java)
+                    val address = bookBoxSnapshot.child("address").getValue((String::class.java))
                     val description = bookBoxSnapshot.child("description").getValue(String::class.java)
                     val imageURL = bookBoxSnapshot.child("imageUrl").getValue(String::class.java)
                     val bookIDs = bookBoxSnapshot.child("bookIDs").children.mapNotNull { it.key }.toMutableList()
 
                     if (lat != null && lng != null && bookBoxId != null) {
                         val location = BookBoxLocation(lat, lng)
-                        val bookBox = BookBox(location, description, imageURL, bookIDs)
+                        val bookBox = BookBox(location, address, description, imageURL, bookIDs)
                         betterBookBox[bookBoxId] = bookBox // Use the unique key for each book box
                     }
                 }
@@ -425,6 +425,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
         }
 
 
+        // getting the firebase to find the users saved favourites
         view.findViewById<Button>(R.id.findFav).setOnClickListener {
             var database: FirebaseDatabase = FirebaseDatabase.getInstance()
             var databaseReference: DatabaseReference = database.getReference("users")
