@@ -1,6 +1,5 @@
 package ca.dal.cs.csci4176.group01undergraduate.view.adapters
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,14 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import ca.dal.cs.csci4176.group01undergraduate.databinding.ItemBookBoxBinding
 import java.net.HttpURLConnection
 import java.net.URL
-import android.location.Geocoder
-import java.io.IOException
-import android.util.Log
-import android.widget.Toast
 import ca.dal.cs.csci4176.group01undergraduate.coords
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.android.extensions.CacheImplementation.Companion.DEFAULT
 import ca.dal.cs.csci4176.group01undergraduate.model.BookBox
 
 // Adapter class for managing the display of book boxes in a RecyclerView.
@@ -27,8 +21,6 @@ class BookBoxAdapter(
     private val context: Context,
     private val onBookBoxClicked: (BookBox) -> Unit
 ) : RecyclerView.Adapter<BookBoxAdapter.BookBoxViewHolder>() {
-    // Geocoder instance for converting geographic locations to human-readable addresses.
-    private val geocoder = Geocoder(context)
 
     // Creates new views for book boxes.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookBoxViewHolder {
@@ -59,27 +51,28 @@ class BookBoxAdapter(
         fun bind(bookBox: BookBox) {
             // Attempt to get a human-readable address for the book box location.
             val location = bookBox.location
-            if (location != null) {
-                Log.d("BookBoxAdapter", "Coordinates before Geocoder: Lat: ${location.latitude}, Lon: ${location.longitude}")
-                try {
-                    // Try to get the address using Geocoder.
-                    val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-                    val addressText = addresses?.let { addressList ->
-                        if (addressList.isNotEmpty()) addressList[0].getAddressLine(0) // Get the full address if available
-                        else "Lat: ${location.latitude}, Lon: ${location.longitude}" // Fallback to coordinates if address not found
-                    } ?: "No Address Found"
-                    binding.locationTextView.text = addressText
-                } catch (e: IOException) {
-                    Log.e("BookBoxAdapter", "Geocoder IOException", e)
-                    // Fallback to coordinates if there's an error with Geocoder.
-                    binding.locationTextView.text = "Lat: ${location.latitude}, Lon: ${location.longitude}"
-                    e.printStackTrace()
-                }
-            } else {
-                Log.d("BookBoxAdapter", "Location is null")
-                // Display a default message if the location is not available.
-                binding.locationTextView.text = "Location not available"
-            }
+//            if (location != null) {
+//                Log.d("BookBoxAdapter", "Coordinates before Geocoder: Lat: ${location.latitude}, Lon: ${location.longitude}")
+//                try {
+//                    // Try to get the address using Geocoder.
+//                    val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+//                    val addressText = addresses?.let { addressList ->
+//                        if (addressList.isNotEmpty()) addressList[0].getAddressLine(0) // Get the full address if available
+//                        else "Lat: ${location.latitude}, Lon: ${location.longitude}" // Fallback to coordinates if address not found
+//                    } ?: "No Address Found"
+//                    binding.locationTextView.text = addressText
+//                } catch (e: IOException) {
+//                    Log.e("BookBoxAdapter", "Geocoder IOException", e)
+//                    // Fallback to coordinates if there's an error with Geocoder.
+//                    binding.locationTextView.text = "Lat: ${location.latitude}, Lon: ${location.longitude}"
+//                    e.printStackTrace()
+//                }
+//            } else {
+//                Log.d("BookBoxAdapter", "Location is null")
+//                // Display a default message if the location is not available.
+//                binding.locationTextView.text = "Location not available"
+//            }
+            binding.locationTextView.text = bookBox.address
 
             // Set the description text.
             binding.descriptionTextView.text = bookBox.description
