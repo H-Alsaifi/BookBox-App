@@ -72,7 +72,7 @@
     <string name="filter_by">Filter by:</string>
     <string name="title">Title</string>
     <string name="author">Author</string>
-    <string name="enter_search_query">Enter search query...</string>
+    <string name="enter_search_query">Enter search query…</string>
     <string name="search1">Search</string>
     <string name="change_password">Change Password</string>
     <string name="new_password">New Password</string>
@@ -91,5 +91,6 @@
     <string name="enable">Enable</string>
     <string name="replyBack">Please submit your info and we will get back to you in 3–5 business days.</string>
     <string name="books_in_box">Books in Box</string>
+    <string name="disclaimer">Note: Books may or may not be available</string>
 
 </resources>
