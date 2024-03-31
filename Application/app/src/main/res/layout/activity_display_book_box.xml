@@ -19,7 +19,7 @@
 
 
     <EditText
-        android:id="@+id/boxAddress"
+        android:id="@+id/boxName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="TextView"
-        app:layout_constraintTop_toBottomOf="@+id/boxAddress"
+        app:layout_constraintTop_toBottomOf="@+id/boxName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"

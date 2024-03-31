@@ -25,6 +25,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import ca.dal.cs.csci4176.group01undergraduate.R
+import ca.dal.cs.csci4176.group01undergraduate.coords
 import ca.dal.cs.csci4176.group01undergraduate.model.BookBoxLocation
 import ca.dal.cs.csci4176.group01undergraduate.model.BookBox
 import ca.dal.cs.csci4176.group01undergraduate.view.activities.AddBookActivity
@@ -59,7 +60,6 @@ import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
 import com.squareup.picasso.Picasso
 import java.io.IOException
-import java.util.Locale
 import kotlin.properties.Delegates
 
 class MapsFragment : Fragment(), OnMarkerClickListener{
@@ -448,13 +448,13 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         // stores coords of all user favorited books
-                        val favCoords: MutableList<BookBoxLocation> = mutableListOf()
+                        val favCoords: MutableList<coords> = mutableListOf()
                         for (contactSnap in snapshot.children) {
                             // getting the long and lat coordinates of the boox boxes
-                            val favlong: Double = (contactSnap.child("longitude").value as Double)
-                            val favlat: Double = (contactSnap.child("latitude").value as Double)
+                            val favlong: Double = (contactSnap.child("boxLong").value as Double)
+                            val favlat: Double = (contactSnap.child("boxLat").value as Double)
                             // and storing them as coords object to add to the list
-                            val coord: BookBoxLocation = BookBoxLocation(favlat, favlong)
+                            val coord: coords = coords(favlat, favlong)
                             favCoords.add(coord)
 
                             // saves the coordinates of the closest bookbox and the current nearest distance
@@ -477,33 +477,9 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                                     minDistance = distance
                                 }
                             }
-                            // trying to convert the coordinates to and address to display for the user
-//                            try {
-//                                val geocoder = context?.let { it1 -> Geocoder(it1, Locale.getDefault()) }
-//                                val addresses = geocoder?.getFromLocation(closeLat, closeLong, 1)
-//                                if (addresses!!.isNotEmpty()) {
-//                                    val address = addresses[0]
-//                                    // Construct a single string from the address' components
-//                                    val addressFragments = with(address) {
-//                                        (0..maxAddressLineIndex).map { getAddressLine(it) }
-//                                    }
-//                                    addressFragments.joinToString(separator = "\n")
-//                                    Toast.makeText(context,addressFragments.toString(),Toast.LENGTH_LONG).show()
-//                                } else {
-//                                    "No address found"
-//                                }
-//                            } catch (e: IOException) {
-//                                e.printStackTrace()
-//                                null
-//                            }
-                            // converting to int to round then to string to display
-                            val latLocation: String = closeLat.toInt().toString()
-                            val longLocation: String = closeLong.toInt().toString()
                             // setting the location in the output text
-                            // converting the coordinate values to a display message for the user and setting the text field to it
-                            val outputText: TextView = view.findViewById(R.id.nearbyLocation)
-                            val outString: String = "Nearby BookBox at: (lat: $latLocation long: $longLocation)"
-                            outputText.text = outString
+                            var outputTxt: String = "Nearby BookBox at: lat: " + closeLat.toString() + " long: " + closeLong.toString()
+                            view.findViewById<TextView>(R.id.favLocation).setText(outputTxt)
                         }
                     }
                 }
@@ -531,7 +507,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             commit() // Commit the transaction
         }
     }
-
 
     // calculates the distance from the user current location to the passed location
     private fun getDistance(lat: Double, long: Double): Double {
