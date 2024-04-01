@@ -28,56 +28,6 @@ H. Dorfmann, "Model-View-Intent," Hannes Dorfmann, [Online]. Available: https://
 
 SVG Repo, “Edit 05 vector svg icon,” SVG Repo, https://www.svgrepo.com/svg/471360/edit-05 (accessed Mar. 31, 2024).
 
-Code for the button of dark and light mode 
-----------------------------------------------
-Activity Class:
-public class SettingsActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-
-        SwitchCompat themeSwitch = findViewById(R.id.themeSwitch);
-        themeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            }
-        });
-    }
-}
-
-Application Class:
-public class MyApp extends Application {
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        boolean isNightModeEnabled = ...;
-
-        if (isNightModeEnabled) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
-    }
-}
-
-Manifest:
-<application
-android:name=".MyApp"
-android:allowBackup="true"
-android:icon="@mipmap/ic_launcher"
-</application>
-
-
-
-
-
-
 
 
 
