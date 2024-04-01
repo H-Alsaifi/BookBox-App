@@ -99,6 +99,9 @@ class BoxFragment : Fragment() {
     private fun onBookBoxClicked(bookBox: BookBox) {
         // Handle the click event for each book box, e.g., navigate to a detail page, or show options to add, view, or delete
         val intent = Intent(context, displayBookBox::class.java)
+        intent.putExtra("description", bookBox.address)
+        bookBox.location?.let { intent.putExtra("latitude", it.latitude) }
+        bookBox.location?.let { intent.putExtra("longitude", it.longitude) }
         intent.putExtra("description", bookBox.description)
         intent.putExtra("imageUrl", bookBox.imageUrl)
         startActivity(intent)

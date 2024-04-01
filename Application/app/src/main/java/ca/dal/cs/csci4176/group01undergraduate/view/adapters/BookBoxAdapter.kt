@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import ca.dal.cs.csci4176.group01undergraduate.coords
 import ca.dal.cs.csci4176.group01undergraduate.databinding.ItemBookBoxBinding
 import java.net.HttpURLConnection
 import java.net.URL
@@ -71,12 +72,18 @@ class BookBoxAdapter(
                 val loc = bookBox.location
                 val userRef = FirebaseDatabase.getInstance().getReference("users").child(userId)
                 // saving the coords of the favorite box in the users favorites
-                val BookBoxLocation: BookBoxLocation? = loc?.let { it1 -> location?.let { it2 ->
-                    BookBoxLocation(it1.longitude,
-                        it2.latitude)
-                } }
+                val coord: coords? =
+                    location?.let { it1 -> bookBox.address?.let { it2 ->
+                        coords(location.latitude, it1.longitude,
+                            it2
+                        )
+                    } }
+//                val coords: coords? = loc?.let { it1 -> location?.let { it2 ->
+//                    coords(it1.longitude,
+//                        it2.latitude)
+//                } }
                 // saving the new favorite book box coordinates
-                userRef.child("favorites").push().setValue(BookBoxLocation)
+                userRef.child("favorites").push().setValue(coord)
             }
 
             // Set a click listener to handle user interaction with the book box item.

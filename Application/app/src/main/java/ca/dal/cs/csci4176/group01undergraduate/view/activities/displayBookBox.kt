@@ -11,7 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import ca.dal.cs.csci4176.group01undergraduate.R
+import ca.dal.cs.csci4176.group01undergraduate.model.BookBoxLocation
 import ca.dal.cs.csci4176.group01undergraduate.view.fragments.BoxFragment
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import java.net.HttpURLConnection
@@ -57,8 +59,17 @@ class displayBookBox : AppCompatActivity() {
 
         // if the user clicks on the bookbox then storing it under their favourites in firebase
         favBtn.setOnClickListener() {
-            // has to be switched to key value
-            databaseReference.child("favourites").setValue(boxName)
+//            // getting the id of the currently logged in user to save the favorite in their account
+//            val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+//            val loc = bookBox.location
+//            val userRef = FirebaseDatabase.getInstance().getReference("users").child(userId)
+//            // saving the coords of the favorite box in the users favorites
+//            val BookBoxLocation: BookBoxLocation? = loc?.let { it1 -> location?.let { it2 ->
+//                BookBoxLocation(it1.longitude,
+//                    it2.latitude)
+//            } }
+//            // saving the new favorite book box coordinates
+//            userRef.child("favorites").push().setValue(BookBoxLocation)
         }
 
         // allowing the user to go back to their previous activity (box fragment)
