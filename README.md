@@ -4,19 +4,29 @@
 
 
 Resrouces: 
-Firebase help: https://console.firebase.google.com/u/1/project/group-1-40481/settings/general/android:com.android.application
+"Firebase Console," Firebase. [Online]. Available: https://console.firebase.google.com/u/1/project/group-1-40481/settings/general/android:com.android.application. Accessed on: Mar. 31, 2024.
 
-Colors: https://stackoverflow.com/questions/3769762/web-colors-in-an-android-color-xml-resource-file
-https://www.schemecolor.com/android-yellow.php
-Styles and themes: https://developer.android.com/develop/ui/views/theming/themes
-Icon: https://icon.kitchen/i/H4sIAAAAAAAAA0WOwQrCMAyG3yVedxgMPOzqI7ibiKRr6srSZrarImPvbluE5ZDAF74%2F2eCNnChCv4HGMA8TOYLeIEdqwDwvbBcMa1lHygM0GUy8QgN2FJ%2BBI58eSmSGvQjDd8k%2BjH%2BvZghLyOxkamWmDqa6tu3OlV0nrG58JRtGphLoRCcu790AvQ5idbksMfcPKbjvP5eQ7fzBAAAA
-https://developer.android.com/studio/write/create-app-icons
-Font: https://developer.android.com/jetpack/compose/text/fonts#kotlin
-Dark and Light mode: https://www.delasign.com/blog/android-studio-kotlin-light-dark-mode/
-MVI: https://medium.com/@meetjanani47/mvi-architecture-implementation-with-kotlin-flow-android-ae094fa83bff#:~:text=The%20meaning%20of%20MVI%20is,trigger%20based%20on%20user%20action
-https://hannesdorfmann.com/android/model-view-intent/
-Options accessible for everyone: https://medium.com/mesmerhq/designing-accessible-text-for-android-variable-font-and-screen-sizes-392fd386aea5
-Colors: https://www.schemecolor.com/android-yellow.php
+K. S., "Web colors in an Android color xml resource file," Stack Overflow, Sep. 27, 2010. [Online]. Available: https://stackoverflow.com/questions/3769762/web-colors-in-an-android-color-xml-resource-file. Accessed on: Mar. 31, 2024.
+
+"Android Yellow Color Scheme," SchemeColor. [Online]. Available: https://www.schemecolor.com/android-yellow.php. Accessed on: Mar. 31, 2024.
+
+Android Developers, "Styles and Themes," Android Developers. [Online]. Available: https://developer.android.com/develop/ui/views/theming/themes. Accessed on: Mar. 31, 2024.
+
+"Icon Kitchen," Icon Kitchen. [Online]. Available: https://icon.kitchen/i/H4sIAAAAAAAAA0WOwQrCMAyG3yVedxgMPOzqI7ibiKRr6srSZrarImPvbluE5ZDAF74%2F2eCNnChCv4HGMA8TOYLeIEdqwDwvbBcMa1lHygM0GUy8QgN2FJ%2BBI58eSmSGvQjDd8k%2BjH%2BvZghLyOxkamWmDqa6tu3OlV0nrG58JRtGphLoRCcu790AvQ5idbksMfcPKbjvP5eQ7fzBAAAA. Accessed on: Mar. 31, 2024.
+
+Android Developers, "Create app icons with Image Asset Studio," Android Developers. [Online]. Available: https://developer.android.com/studio/write/create-app-icons. Accessed on: Mar. 31, 2024.
+
+Android Developers, "Fonts in XML," Android Developers. [Online]. Available: https://developer.android.com/jetpack/compose/text/fonts#kotlin. Accessed on: Mar. 31, 2024.
+
+"Android Studio Kotlin Light & Dark Mode," Delasign, 2024. [Online]. Available: https://www.delasign.com/blog/android-studio-kotlin-light-dark-mode/. Accessed on: Mar. 31, 2024.
+
+J. Janani, "MVI Architecture Implementation with Kotlin Flow Android," Medium, [Online]. Available: https://medium.com/@meetjanani47/mvi-architecture-implementation-with-kotlin-flow-android-ae094fa83bff. Accessed on: Mar. 31, 2024.
+
+H. Dorfmann, "Model-View-Intent," Hannes Dorfmann, [Online]. Available: https://hannesdorfmann.com/android/model-view-intent/. Accessed on: Mar. 31, 2024.
+
+"Designing Accessible Text for Android: Variable Font and Screen Sizes," Medium, [Online]. Available: https://medium.com/mesmerhq/designing-accessible-text-for-android-variable-font-and-screen-sizes-392fd386aea5. Accessed on: Mar. 31, 2024.
+
+SVG Repo, “Edit 05 vector svg icon,” SVG Repo, https://www.svgrepo.com/svg/471360/edit-05 (accessed Mar. 31, 2024).
 
 Code for the button of dark and light mode 
 ----------------------------------------------
