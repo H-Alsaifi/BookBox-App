@@ -88,7 +88,6 @@
         android:gravity="center"
         android:text="@string/welcome_message"
         android:textSize="20sp"
-        android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@id/emailLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
