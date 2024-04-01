@@ -60,6 +60,7 @@ import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
 import com.squareup.picasso.Picasso
 import java.io.IOException
+import java.util.Locale
 import kotlin.properties.Delegates
 
 class MapsFragment : Fragment(), OnMarkerClickListener{
@@ -450,36 +451,51 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                         // stores coords of all user favorited books
                         val favCoords: MutableList<coords> = mutableListOf()
                         for (contactSnap in snapshot.children) {
-                            // getting the long and lat coordinates of the boox boxes
-                            val favlong: Double = (contactSnap.child("boxLong").value as Double)
-                            val favlat: Double = (contactSnap.child("boxLat").value as Double)
-                            // and storing them as coords object to add to the list
-                            val coord: coords = coords(favlat, favlong)
-                            favCoords.add(coord)
+                            // ensuring the user has at least 1 favorited book box
+                            if (contactSnap.child("longitude").value != null && contactSnap.child("latitude").value != null && contactSnap.child("address") != null) {
+                                // getting the long and lat coordinates of the boox boxes
+                                val favlong: Double =
+                                    (contactSnap.child("longitude").value as Double)
+                                val favlat: Double = (contactSnap.child("latitude").value as Double)
+                                val address: String = contactSnap.child("address").value as String
+                                // and storing them as coords object to add to the list
+                                val coord: coords = coords(favlat, favlong, address)
+                                favCoords.add(coord)
 
-                            // saves the coordinates of the closest bookbox and the current nearest distance
-                            var minDistance: Double = 0.0
-                            var closeLong: Double = 0.0
-                            var closeLat: Double = 0.0
-                            // comparing the user favourites with the book boxes
-                            for ((lat, long) in favCoords) {
-                                var distance: Double = getDistance(lat, long)
-                                // if its the first or only fav then its set to be the closest box
-                                if (minDistance == 0.0) {
-                                    minDistance = distance
-                                    closeLong = long
-                                    closeLat = lat
+                                // saves the coordinates of the closest bookbox and the current nearest distance
+                                var minDistance: Double = 0.0
+                                var closeLong: Double = 0.0
+                                var closeLat: Double = 0.0
+                                var boxName: String = ""
+                                // comparing the user favourites with the book boxes
+                                for ((lat, long, address) in favCoords) {
+                                    var distance: Double = getDistance(lat, long)
+                                    // if its the first or only fav then its set to be the closest box
+                                    if (minDistance == 0.0) {
+                                        minDistance = distance
+                                        closeLong = long
+                                        closeLat = lat
+                                        boxName = address
+                                    }
+                                    // if the new book box had a closer distance then its now saved as such
+                                    if (distance < minDistance) {
+                                        closeLong = long
+                                        closeLat = lat
+                                        boxName = address
+                                        minDistance = distance
+                                    }
                                 }
-                                // if the new book box had a closer distance then its now saved as such
-                                if (distance < minDistance) {
-                                    closeLong = long
-                                    closeLat = lat
-                                    minDistance = distance
-                                }
+                                // converting to int to round then to string to display
+                                val latLocation: String = closeLat.toInt().toString()
+                                val longLocation: String = closeLong.toInt().toString()
+                                // setting the location in the output text
+                                // converting the coordinate values to a display message for the user and setting the text field to it
+                                val outputText: TextView = view.findViewById(R.id.favLocation)
+//                                val outString: String =
+//                                    "Nearby BookBox at: (lat: $latLocation long: $longLocation)"
+                                outputText.text = boxName
                             }
-                            // setting the location in the output text
-                            var outputTxt: String = "Nearby BookBox at: lat: " + closeLat.toString() + " long: " + closeLong.toString()
-                            view.findViewById<TextView>(R.id.favLocation).setText(outputTxt)
+
                         }
                     }
                 }
