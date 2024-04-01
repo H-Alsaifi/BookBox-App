@@ -451,7 +451,7 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                         val favCoords: MutableList<BookBoxLocation> = mutableListOf()
                         for (contactSnap in snapshot.children) {
                             // ensuring the user has at least 1 favorited book box
-                            if (contactSnap.child("longitude").value != null || contactSnap.child("latitude").value != null) {
+                            if (contactSnap.child("longitude").value != null && contactSnap.child("latitude").value != null) {
                                 // getting the long and lat coordinates of the boox boxes
                                 val favlong: Double =
                                     (contactSnap.child("longitude").value as Double)
@@ -504,14 +504,12 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
                                 val longLocation: String = closeLong.toInt().toString()
                                 // setting the location in the output text
                                 // converting the coordinate values to a display message for the user and setting the text field to it
-                                val outputText: TextView = view.findViewById(R.id.nearbyLocation)
+                                val outputText: TextView = view.findViewById(R.id.favLocation)
                                 val outString: String =
                                     "Nearby BookBox at: (lat: $latLocation long: $longLocation)"
                                 outputText.text = outString
                             }
-                            else {
-                                Toast.makeText(context,"No favorited bookboxes",Toast.LENGTH_LONG).show()
-                            }
+
                         }
                     }
                 }
@@ -539,7 +537,6 @@ class MapsFragment : Fragment(), OnMarkerClickListener{
             commit() // Commit the transaction
         }
     }
-
 
     // calculates the distance from the user current location to the passed location
     private fun getDistance(lat: Double, long: Double): Double {

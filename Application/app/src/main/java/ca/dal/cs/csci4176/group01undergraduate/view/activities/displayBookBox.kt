@@ -11,9 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import ca.dal.cs.csci4176.group01undergraduate.R
-import ca.dal.cs.csci4176.group01undergraduate.model.BookBoxLocation
 import ca.dal.cs.csci4176.group01undergraduate.view.fragments.BoxFragment
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import java.net.HttpURLConnection
@@ -31,16 +29,14 @@ class displayBookBox : AppCompatActivity() {
             insets
         }
         val bookBoxImage: ImageView = findViewById(R.id.bookBoxImage)
-        val boxAddress: EditText = findViewById<EditText?>(R.id.boxAddress)
+        val boxName: EditText = findViewById<EditText?>(R.id.boxName)
         val boxDesc: EditText = findViewById<EditText?>(R.id.boxDesc)
         val favBtn: Button = findViewById(R.id.favouriteBox)
         val backBtn: Button = findViewById(R.id.backBtn)
 
         // displays the details of the book box that was passed from the intent
+        val name = intent.getStringExtra("name")
         val description = intent.getStringExtra("description")
-        val address = intent.getStringExtra("address")
-        boxAddress.setText(address)
-        boxDesc.setText(description)
         Thread {
             val bitmap = downloadImage(intent.getStringExtra("imageUrl"))
             runOnUiThread {
@@ -55,18 +51,14 @@ class displayBookBox : AppCompatActivity() {
         databaseReference = db.getReference()
         databaseReference.child("users")
 
+        // displaying the book box information for the user
+        boxName.setText(name)
+        boxDesc.setText(description)
+
         // if the user clicks on the bookbox then storing it under their favourites in firebase
         favBtn.setOnClickListener() {
-            // getting the selected book boxes coordinates from intent
-            val latitude = intent.getStringExtra("lat")!!.toDouble()
-            val longitude = intent.getStringExtra("long")!!.toDouble()
-            // getting the id of the currently logged in user to save the favorite in their account
-            val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
-            val userRef = FirebaseDatabase.getInstance().getReference("users").child(userId)
-            // saving the coords of the favorite box in the users favorites
-            val Coords: BookBoxLocation? = BookBoxLocation(latitude,longitude)
-            // saving the new favorite book box coordinates
-            userRef.child("favorites").push().setValue(Coords)
+            // has to be switched to key value
+            databaseReference.child("favourites").setValue(boxName)
         }
 
         // allowing the user to go back to their previous activity (box fragment)

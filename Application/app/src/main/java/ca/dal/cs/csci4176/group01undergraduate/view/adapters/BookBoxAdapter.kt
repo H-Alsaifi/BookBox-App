@@ -71,12 +71,12 @@ class BookBoxAdapter(
                 val loc = bookBox.location
                 val userRef = FirebaseDatabase.getInstance().getReference("users").child(userId)
                 // saving the coords of the favorite box in the users favorites
-                val Coords: BookBoxLocation? = loc?.let { it1 -> location?.let { it2 ->
+                val BookBoxLocation: BookBoxLocation? = loc?.let { it1 -> location?.let { it2 ->
                     BookBoxLocation(it1.longitude,
                         it2.latitude)
                 } }
                 // saving the new favorite book box coordinates
-                userRef.child("favorites").push().setValue(Coords)
+                userRef.child("favorites").push().setValue(BookBoxLocation)
             }
 
             // Set a click listener to handle user interaction with the book box item.
