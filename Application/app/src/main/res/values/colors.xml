@@ -7,4 +7,14 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="yellow">#F9DB22</color>
+    <color name="purple_200_night">#FFBB86FC</color>
+    <color name="purple_700_night">#FF3700B3</color>
+    <color name="teal_200_night">#FF03DAC5</color>
+    <color name="teal_700_night">#FF018786</color>
+    <color name="black_night">#FFFFFF</color>
+    <color name="yellow_night">#FFC107</color>
+    <color name="rose">#FF6161</color>
+    <color name="lightRose">#B30036</color>
+    <color name="primaryColor">#B30036</color>
 </resources>

@@ -1,0 +1,19 @@
+<resources>
+    <style name="Theme.Group01Undergraduate" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="colorPrimary">@color/rose</item>
+        <item name="colorPrimaryVariant">@color/purple_700_night</item>
+        <item name="colorOnPrimary">@color/black_night</item>
+        <item name="colorSecondary">@color/teal_200_night</item>
+        <item name="colorSecondaryVariant">@color/teal_700_night</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:statusBarColor">@color/rose</item>
+        <item name="buttonStyle">@style/ButtonStyle</item>
+    </style>
+
+    <style name="LoginTextInputOuterFieldStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+    </style>
+
+    <style name="LoginTextInputInnerFieldStyle" parent="Widget.MaterialComponents.TextInputEditText.OutlinedBox.Dense">
+    </style>
+</resources>
