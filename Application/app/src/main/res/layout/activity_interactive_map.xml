@@ -58,9 +58,14 @@
 
     <TextView
         android:id="@+id/favLocation"
-        android:layout_width="177dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="16dp"
+        android:textColor="#ffffffff"
+        android:background="#80000000"
         app:layout_anchor="@+id/map"
-        app:layout_anchorGravity="top|center" />
+        app:layout_anchorGravity="bottom|center" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
