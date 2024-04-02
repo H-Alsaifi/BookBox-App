@@ -79,16 +79,27 @@ class ResetPasswordActivity : AppCompatActivity() {
         }
     }
 
+    //    Displays a message in an AlertDialog with a specified message and title.
     private fun displayMessage(message: String) {
+        // Create an AlertDialog.Builder object
         val builder = AlertDialog.Builder(this)
+
+        // Set the message and title of the AlertDialog
         builder.setMessage(message)
         builder.setTitle("Update !")
+
+        // Ensure the AlertDialog cannot be dismissed by clicking outside it
         builder.setCancelable(false)
+
+        // Create the AlertDialog
         val alertDialog = builder.create()
+
+        // Show the AlertDialog
         alertDialog.show()
+
+        // Use a Handler to dismiss the AlertDialog after a delay of 5 seconds (5000 milliseconds)
         Handler(Looper.getMainLooper()).postDelayed({
             alertDialog.dismiss()
         }, 5000)
-
     }
 }
